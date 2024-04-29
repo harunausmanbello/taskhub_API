@@ -44,8 +44,12 @@ export default {
             }
 
             if (user && isPasswordValid) {
-              const tokenFromConfig : string = config.get('JWT.TOKEN');
-              const token : string = jwt.sign({ _id: user._id, email: user.email }, tokenFromConfig, { expiresIn: '1h' });
+              const tokenFromConfig: string = config.get("JWT.TOKEN");
+              const token: string = jwt.sign(
+                { _id: user._id, email: user.email },
+                tokenFromConfig,
+                { expiresIn: "1h" }
+              );
               return {
                 code: 200,
                 token: token,

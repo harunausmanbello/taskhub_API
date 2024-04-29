@@ -5,7 +5,6 @@ import signinInputs from "../models/signin";
 import verifyToken from "../validators/token";
 import AuthRequest from "../dtos/token";
 
-
 const router = Router();
 
 router.post("/", (req: Request, res: Response) => {
@@ -28,7 +27,7 @@ router.post("/", (req: Request, res: Response) => {
 });
 
 router.get("/token", verifyToken, (req: AuthRequest, res: Response) => {
-  const payload : {_id: string, email:string}= req.payloadData;
+  const payload: { _id: string; email: string } = req.payloadData;
   res.status(200).send(payload);
 });
 

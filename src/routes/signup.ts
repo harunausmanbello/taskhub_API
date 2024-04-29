@@ -7,13 +7,15 @@ const router = Router();
 
 router.post("/", async (req: Request, res: Response) => {
   const inputBody = req.body as SignUpInterface;
-  
+
   inputSchema
     .validateAsync(inputBody)
     .then(async (validatedData) => signupInputs.signup(validatedData))
     .then((response) => res.status(201).send(response))
     .catch((error) =>
-      res.status(404).send(error.details ? error.details[0].message : error.message)
+      res
+        .status(404)
+        .send(error.details ? error.details[0].message : error.message)
     );
 });
 
