@@ -4,7 +4,7 @@ import dbConnection from "../config/database";
 
 
 //routes modules
-import baseUrl from "../src/routes/signup";
+import baseUrl from "./routes/base_url";
 
 dbConnection//calling the dbConnection in app.ts
 
