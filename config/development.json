@@ -1,14 +1,14 @@
 {
-    "APP": {
-       "APP_NAME": "TaskHub",
-       "APP_URL": "http://taskhub.test"
-    },
-    "DB": {
-       "DB_HOST": "localhost",
-       "DB_NAME": "taskhub",
-       "DB_PORT": 5000
-    },
-    "JWT": {
-       "TOKEN":"taskHubToken"
-    }
- }
+  "APP": {
+    "APP_NAME": "TaskHub",
+    "APP_URL": "http://taskhub.test"
+  },
+  "DB": {
+    "DB_HOST": "localhost",
+    "DB_NAME": "taskhub",
+    "DB_PORT": 5000
+  },
+  "JWT": {
+    "TOKEN": "taskHubToken"
+  }
+}

@@ -6,7 +6,6 @@ const { DB_HOST, DB_NAME }: DBConfig = config.get("DB");
 
 const connectionString = `mongodb://${DB_HOST}/${DB_NAME}`;
 
-
 export default mongoose
   .connect(connectionString)
   .then(() => console.log("Connected to MongoDB.."))
