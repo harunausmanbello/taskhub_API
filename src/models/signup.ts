@@ -21,12 +21,12 @@ export default {
 
             const newUser: SignUpInterface = new UserSignUp({
               ..._.pick(bodyData, ["firstname", "lastname", "matric", "email"]),
-              password: hashedPassword, 
+              password: hashedPassword,
             });
 
             return newUser
               .save()
-              .then((savedRegister: { _id: string; email: string; }) => {
+              .then((savedRegister: { _id: string; email: string }) => {
                 return {
                   code: 201,
                   message: "User registration successful.",
@@ -37,12 +37,16 @@ export default {
                 };
               })
               .catch((error: any) => {
-                return error.details ? error.details[0].message.status : error.message;
+                return error.details
+                  ? error.details[0].message.status
+                  : error.message;
               });
           })
           .catch((error: any) => {
-            return error.details ? error.details[0].message.status : error.message;
+            return error.details
+              ? error.details[0].message.status
+              : error.message;
           })
-      : 'Password not validate';
+      : "Password not validate";
   },
 };
