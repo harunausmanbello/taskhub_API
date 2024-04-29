@@ -7,20 +7,20 @@ import inputSchema from "../validators/signup";
 import UserSignUp from "./users";
 
 export default {
-  signup: async (data: SignUpInterface) => {
-    return validatePassword(data.password)
+  signup: async (bodyData: SignUpInterface) => {
+    return validatePassword(bodyData.password)
       ? inputSchema
-          .validateAsync(data)
+          .validateAsync(bodyData)
           .then(async () => {
             const salt: string = await bcrypt.genSalt(10);
 
             const hashedPassword: string = await bcrypt.hash(
-              data.password,
+              bodyData.password,
               salt
             );
 
             const newUser: SignUpInterface = new UserSignUp({
-              ..._.pick(data, ["firstname", "lastname", "matric", "email"]),
+              ..._.pick(bodyData, ["firstname", "lastname", "matric", "email"]),
               password: hashedPassword, 
             });
 
