@@ -2,12 +2,19 @@ import express from "express";
 import config from "config";
 import dbConnection from "../config/database";
 
+
+//routes modules
+import baseUrl from "../src/routes/signup";
+
 dbConnection//calling the dbConnection in app.ts
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+//routes
+app.use('/', baseUrl);
 
 const port: number = config.get("DB.DB_PORT") || 2000;
 
