@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import config from "config";
-import DBConfig from "../src/dtos/db.config";
+import DBConfig from "../src/dtos/db_config";
 
 const { DB_HOST, DB_NAME }: DBConfig = config.get("DB");
 
