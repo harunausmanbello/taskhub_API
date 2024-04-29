@@ -6,6 +6,7 @@ import helmet from "helmet";
 //routes modules
 import baseUrl from "./routes/base_url";
 import signUp from "./routes/signup";
+import signIn from "./routes/signin";
 
 dbConnection; //calling the dbConnection in app.ts
 
@@ -18,6 +19,7 @@ app.use(helmet());
 //routes
 app.use("/", baseUrl);
 app.use("/signup", signUp);
+app.use("/signin", signIn);
 
 const port: number = config.get("DB.DB_PORT") || 3000;
 
