@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 //routes
 app.use('/', baseUrl);
 
+
 const port: number = config.get("DB.DB_PORT") || 3000;
 
 app.listen(port, () => console.log(`TaskHub is listening on port ${port}...`));
