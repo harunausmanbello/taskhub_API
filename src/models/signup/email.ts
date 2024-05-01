@@ -4,7 +4,7 @@ import { Mail, MailOptions } from "../../dtos/signup";
 import ejs from "ejs";
 import fs from "fs";
 
-import UserSignUp from "../schema/users";
+import UserSignUp from "../schema/user";
 
 export default {
   signupMail: async (data: Mail) => {
@@ -13,8 +13,8 @@ export default {
       const transporter = nodemailer.createTransport({
         service: "Gmail",
         auth: {
-          user: "harunarrasheeed@gmail.com", 
-          pass: "luwxlxkdcjooreen", 
+          user: "harunarrasheeed@gmail.com",
+          pass: "luwxlxkdcjooreen",
         },
       });
 
@@ -34,21 +34,21 @@ export default {
 
       // Define the email message options
       const mailOptions: MailOptions = {
-        from: "harunarrasheeed@gmail.com", 
-        to: email, 
-        subject: "Email Verification", 
+        from: "harunarrasheeed@gmail.com",
+        to: email,
+        subject: "Email Verification",
         html: compiledTemplate({
           recipientName: returnData?.firstname,
           senderName: "Rashid",
           url: `http://5000/signup/verify/${token}`,
-        }), 
+        }),
       };
 
       const info: any = await transporter.sendMail(mailOptions);
 
       return info.rejected.length === 0
         ? "Email sent successfully with token: " + token
-        : "Email was rejected"; 
+        : "Email was rejected";
     } catch (error) {
       return error;
     }

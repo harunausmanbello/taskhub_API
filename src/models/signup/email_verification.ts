@@ -1,5 +1,5 @@
 import _ from "lodash";
-import UserSignUp from "../schema/users";
+import UserSignUp from "../schema/user";
 import { MailVerification } from "../../dtos/signup";
 
 export default {

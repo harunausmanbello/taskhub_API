@@ -2,6 +2,8 @@ import express from "express";
 import config from "config";
 import dbConnection from "../config/database";
 import helmet from "helmet";
+import passport from "passport";
+import initializePassport from "./middleware/authentication";
 
 //routes modules
 import baseUrl from "./routes/base";
@@ -9,16 +11,18 @@ import signUp from "./routes/signup";
 import signIn from "./routes/signin";
 
 dbConnection; //calling the dbConnection in app.ts
+initializePassport(passport); // Pass initialized Passport instance to the middleware
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
+app.use(passport.initialize()); // passport initialization
 
 /* Templating Engine using ejs */
 app.set("view engine", "ejs");
-app.set("views", "./src/views"); 
+app.set("views", "./src/views");
 
 //routes
 app.use("/", baseUrl);

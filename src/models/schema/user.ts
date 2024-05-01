@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 // Interface for user registration document
-interface UserSignUpDocument extends Document {
+interface UserDocument extends Document {
   firstname: string;
   lastname: string;
   isLecturer: boolean;
@@ -13,7 +13,7 @@ interface UserSignUpDocument extends Document {
 }
 
 // Schema for user registration
-const signupSchema: Schema<UserSignUpDocument> = new Schema({
+const schema: Schema<UserDocument> = new Schema({
   firstname: {
     type: String,
     minlength: [3, "firstname must be at least 3 characters long"],
@@ -36,7 +36,7 @@ const signupSchema: Schema<UserSignUpDocument> = new Schema({
     maxlength: [11, "Matric must be 11 characters long"],
     lowercase: true,
     unique: true, 
-    required: function (this: UserSignUpDocument) {
+    required: function (this: UserDocument) {
       return !this.isLecturer;
     },
   },
@@ -65,7 +65,7 @@ const signupSchema: Schema<UserSignUpDocument> = new Schema({
 });
 
 // Model for user registration
-const UserSignUp: Model<UserSignUpDocument> =
-  mongoose.model<UserSignUpDocument>("users", signupSchema);
+const User: Model<UserDocument> =
+  mongoose.model<UserDocument>("users", schema);
 
-export default UserSignUp;
+export default User;

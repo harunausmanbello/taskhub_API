@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import validatePassword from "../../validators/password_complexity";
 import SignUpInterface from "../../dtos/signup";
 import inputSchema from "../../validators/signup";
-import UserSignUp from "../schema/users";
+import UserSignUp from "../schema/user";
 
 export default {
   signup: async (bodyData: SignUpInterface) => {

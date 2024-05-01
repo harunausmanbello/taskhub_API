@@ -6,7 +6,7 @@ import config from "config";
 import SignIn, { SignInUser } from "../../dtos/signin";
 import validatePassword from "../../validators/password_complexity";
 import signInSchema from "../../validators/signin";
-import UserSignIn from "../schema/users";
+import UserSignIn from "../schema/user";
 
 export default {
   signin: async (bodyData: SignIn) => {

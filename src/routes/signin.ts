@@ -1,13 +1,18 @@
 import { Router, Request, Response } from "express";
+import passport from "passport";
 import SignIn from "../dtos/signin";
 import signInSchema from "../validators/signin";
 import signInModel from "../models/signin/signin";
-// import verifyToken from "../validators/token";
-// import AuthRequest from "../dtos/token";
+import jwtToken from "../validators/token";
+import AuthRequest from "../dtos/token";
+
+const authenticateJWTPassport: any = passport.authenticate('jwt', { session: false });
+
+
 
 const router = Router();
 
-router.post("/", (req: Request, res: Response) => {
+router.post("/",  (req: Request, res: Response) => {
   const inputBody = req.body as SignIn;
 
   signInSchema
@@ -26,9 +31,14 @@ router.post("/", (req: Request, res: Response) => {
     );
 });
 
-// router.get("/token", verifyToken, (req: AuthRequest, res: Response) => {
-//   const payload: { _id: string; email: string } = req.payloadData;
-//   res.status(200).send(payload);
-// });
+
+router.get('/protected', authenticateJWTPassport, (req: Request, res: Response) => {
+    res.json({ message: "Authenticated successfully", user: req.user });
+});
+
+router.get("/token", jwtToken, (req: AuthRequest, res: Response) => {
+  const payload: { _id: string; email: string } = req.payloadData;
+  res.status(200).send(payload);
+});
 
 export default router;
