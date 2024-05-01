@@ -3,29 +3,26 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "config";
 
-import SignInInterface from "../../dtos/signin";
+import SignIn, { SignInUser } from "../../dtos/signin";
 import validatePassword from "../../validators/password_complexity";
-import inputSchema from "../../validators/signin";
+import signInSchema from "../../validators/signin";
 import UserSignIn from "../schema/users";
+
 export default {
-  signin: async (bodyData: SignInInterface) => {
-    const { email, password }: SignInInterface = _.pick(bodyData, [
-      "email",
-      "password",
-    ]);
+  signin: async (bodyData: SignIn) => {
+    const { email, password }: SignIn = _.pick(bodyData, ["email", "password"]);
 
     return validatePassword(bodyData.password)
-      ? inputSchema
+      ? signInSchema
           .validateAsync(bodyData)
           .then(async () => {
-            const user: SignInInterface | null = await UserSignIn.findOne({
+            const user: SignInUser | null = await UserSignIn.findOne({
               email: email,
             });
 
             if (!user) {
               return {
-                success: false,
-                title: "Opps!",
+                code: 401,
                 message: "Invalid Email or Password",
               };
             }
@@ -37,8 +34,7 @@ export default {
 
             if (!isPasswordValid) {
               return {
-                success: false,
-                title: "Opps!",
+                code: 401,
                 message: "Invalid Email or Password",
               };
             }
@@ -53,11 +49,6 @@ export default {
               return {
                 code: 200,
                 token: token,
-
-                userData: {
-                  _id: user._id,
-                  email: user.email,
-                },
               };
             }
           })
