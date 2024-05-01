@@ -1,10 +1,10 @@
 import _ from "lodash";
 import bcrypt from "bcrypt";
 
-import validatePassword from "../validators/password_complexity";
-import SignUpInterface from "../dtos/signup";
-import inputSchema from "../validators/signup";
-import UserSignUp from "./users";
+import validatePassword from "../../validators/password_complexity";
+import SignUpInterface from "../../dtos/signup";
+import inputSchema from "../../validators/signup";
+import UserSignUp from "../schema/users";
 
 export default {
   signup: async (bodyData: SignUpInterface) => {

@@ -10,17 +10,15 @@ import signIn from "./routes/signin";
 
 dbConnection; //calling the dbConnection in app.ts
 
-
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 
-
 /* Templating Engine using ejs */
-app.set('view engine', 'ejs');
-app.set('views', './src/views');//setting the folder for the templates
+app.set("view engine", "ejs");
+app.set("views", "./src/views"); 
 
 //routes
 app.use("/", baseUrl);

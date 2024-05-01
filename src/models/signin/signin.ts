@@ -3,10 +3,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "config";
 
-import SignInInterface from "../dtos/signin";
-import validatePassword from "../validators/password_complexity";
-import inputSchema from "../validators/signin";
-import UserSignIn from "./users";
+import SignInInterface from "../../dtos/signin";
+import validatePassword from "../../validators/password_complexity";
+import inputSchema from "../../validators/signin";
+import UserSignIn from "../schema/users";
 export default {
   signin: async (bodyData: SignInInterface) => {
     const { email, password }: SignInInterface = _.pick(bodyData, [

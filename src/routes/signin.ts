@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import SignInInterface from "../dtos/signin";
 import inputSchema from "../validators/signin";
-import signinInputs from "../models/signin";
+import signinInputs from "../models/signin/signin";
 import verifyToken from "../validators/token";
 import AuthRequest from "../dtos/token";
 

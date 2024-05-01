@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// Define interface for user registration document
+// Interface for user registration document
 interface UserSignUpDocument extends Document {
   firstname: string;
   lastname: string;
@@ -12,7 +12,7 @@ interface UserSignUpDocument extends Document {
   password: string;
 }
 
-// Define schema for user registration
+// Schema for user registration
 const signupSchema: Schema<UserSignUpDocument> = new Schema({
   firstname: {
     type: String,
@@ -28,14 +28,14 @@ const signupSchema: Schema<UserSignUpDocument> = new Schema({
   },
   isLecturer: {
     type: Boolean,
-    default: false, // Set default value to false
+    default: false, 
   },
   matric: {
     type: String,
     minlength: [11, "Matric must be 11 characters long"],
     maxlength: [11, "Matric must be 11 characters long"],
     lowercase: true,
-    unique: true, // Adjusted the type to boolean (true) instead of array
+    unique: true, 
     required: function (this: UserSignUpDocument) {
       return !this.isLecturer;
     },
@@ -45,7 +45,7 @@ const signupSchema: Schema<UserSignUpDocument> = new Schema({
     required: [true, "Email is required"],
     minlength: [5, "Email must be at least 5 characters long"],
     lowercase: true,
-    unique: true, // Adjusted the type to boolean (true) instead of array
+    unique: true, 
     match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
   },
   token: {

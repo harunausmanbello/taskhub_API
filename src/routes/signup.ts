@@ -1,10 +1,9 @@
 import { Router, Request, Response } from "express";
 import inputSchema from "../validators/signup";
 import SignUpInterface from "../dtos/signup";
-import signupInputs from "../models/signup";
-import signupMail from "../models/signup_mail";
-import verify_mail from "../models/verify_mail";
-
+import signupInputs from "../models/signup/signup";
+import signupMail from "../models/signup/email";
+import verify_mail from "../models/signup/email_verification";
 
 const router = Router();
 

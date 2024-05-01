@@ -1,29 +1,25 @@
 import crypto from "crypto";
 import nodemailer from "nodemailer";
-import SignUpMailInterface, {
-  SignUpMailOptionInterface,
-} from "../dtos/signupMail";
+import { Mail, MailOptions } from "../../dtos/signup";
 import ejs from "ejs";
 import fs from "fs";
 
-import UserSignUp from "./users";
+import UserSignUp from "../schema/users";
 
 export default {
-  signupMail: async (data: SignUpMailInterface) => {
-    const { _id, email }: SignUpMailInterface = data;
+  signupMail: async (data: Mail) => {
+    const { _id, email }: Mail = data;
     try {
-      // Create a nodemailer transporter
       const transporter = nodemailer.createTransport({
-        service: "Gmail", // Use your email service provider
+        service: "Gmail",
         auth: {
-          user: "harunarrasheeed@gmail.com", // Replace with your email address
-          pass: "luwxlxkdcjooreen", // Replace with your email password
+          user: "harunarrasheeed@gmail.com", 
+          pass: "luwxlxkdcjooreen", 
         },
       });
 
       const token: string = crypto.randomBytes(16).toString("hex");
 
-      // Save the token to the user document
       const returnData: { _id: string; firstname: string } | null =
         await UserSignUp.findByIdAndUpdate(_id, { token: token });
 
@@ -36,24 +32,23 @@ export default {
       // Compile the email template using EJS
       const compiledTemplate = ejs.compile(templateFile);
 
-
-
       // Define the email message options
-      const mailOptions: SignUpMailOptionInterface = {
-        from: "harunarrasheeed@gmail.com", // Sender address
-        to: email, // List of recipients
-        subject: "Email Verification", // Subject line
+      const mailOptions: MailOptions = {
+        from: "harunarrasheeed@gmail.com", 
+        to: email, 
+        subject: "Email Verification", 
         html: compiledTemplate({
           recipientName: returnData?.firstname,
           senderName: "Rashid",
           url: `http://5000/signup/verify/${token}`,
-        }), // Rendered HTML content with userId in URL
+        }), 
       };
 
       const info: any = await transporter.sendMail(mailOptions);
 
-      return info.rejected.length === 0 ? "Email sent successfully with token: " + token: "Email was rejected"; // Returning userId
-
+      return info.rejected.length === 0
+        ? "Email sent successfully with token: " + token
+        : "Email was rejected"; 
     } catch (error) {
       return error;
     }

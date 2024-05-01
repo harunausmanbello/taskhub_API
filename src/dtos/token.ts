@@ -2,9 +2,9 @@ import { Request } from "express";
 
 interface AuthRequest extends Request {
   headers: {
-    [key: string]: string | string[] | undefined; // Allow undefined values
+    [key: string]: string | string[] | undefined; 
   };
-  payloadData?: any; // Define the payloadData property
+  payloadData?: any;
 }
 
 export default AuthRequest;
