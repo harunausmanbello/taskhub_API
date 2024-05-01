@@ -10,3 +10,16 @@ export interface SignUpMailOptionInterface {
   html?: string;
 }
 
+export interface SignUpVerifyMailInterface{
+  [x: string]: any;
+  _id: string,
+  firstname: string,
+  lastname: string,
+  isLecturer: boolean,
+  matric: string,
+  email: string,
+  token: string,
+  isVerified: boolean,
+  password: string,
+}
+

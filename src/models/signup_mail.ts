@@ -36,6 +36,8 @@ export default {
       // Compile the email template using EJS
       const compiledTemplate = ejs.compile(templateFile);
 
+
+
       // Define the email message options
       const mailOptions: SignUpMailOptionInterface = {
         from: "harunarrasheeed@gmail.com", // Sender address
@@ -50,7 +52,8 @@ export default {
 
       const info: any = await transporter.sendMail(mailOptions);
 
-      return info; // Returning userId
+      return info.rejected.length === 0 ? "Email sent successfully with token: " + token: "Email was rejected"; // Returning userId
+
     } catch (error) {
       return error;
     }
