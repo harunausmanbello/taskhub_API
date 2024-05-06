@@ -25,7 +25,7 @@ export default {
 
     // Load the email template file
     const templateFile: string = fs.readFileSync(
-      "./src/views/signup_mail.ejs",
+      "./src/views/signup/email.ejs",
       "utf8"
     );
 

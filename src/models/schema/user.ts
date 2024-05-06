@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 // Interface for user registration document
-interface UserDocument extends Document {
+export interface UserDocument extends Document {
   firstname: string;
   lastname: string;
   isLecturer: boolean;

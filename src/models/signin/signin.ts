@@ -49,6 +49,10 @@ export default {
               return {
                 code: 200,
                 token: token,
+                userData: {
+                  _id: user._id,
+                  email: user.email
+                }
               };
             } else {
               return {

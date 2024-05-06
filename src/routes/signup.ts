@@ -12,7 +12,7 @@ router.post("/", async (req: Request, res: Response) => {
 
   inputSchema
     .validateAsync(inputBody)
-    .then(async (validatedData) => signupInputs.signup(validatedData))
+    .then(async (validatedData) => await signupInputs.signup(validatedData))
     .then(async (response) => {
       if (response && response.success === true) {
         const mail: any = await signupMail.signupMail(response.userData);
@@ -22,9 +22,9 @@ router.post("/", async (req: Request, res: Response) => {
       }
     })
     .catch((error) => {
-      res.status(400).send({
-        message: error.details ? error.details[0].message : error.message,
-      });
+      res
+        .status(400)
+        .json({ message: error.details ? error.details[0].message : error.message});
     });
 });
 

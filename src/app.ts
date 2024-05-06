@@ -4,6 +4,7 @@ import dbConnection from "../config/database";
 import helmet from "helmet";
 import passport from "passport";
 import initializePassport from "./middleware/authentication";
+import updateExpiredOtps from "../config/otp";
 
 //routes modules
 import baseUrl from "./routes/base";
@@ -12,6 +13,11 @@ import signIn from "./routes/signin";
 
 dbConnection; //calling the dbConnection in app.ts
 initializePassport(passport); // Pass initialized Passport instance to the middleware
+updateExpiredOtps();
+
+setInterval(() => {
+  updateExpiredOtps();
+}, 1000);
 
 const app = express();
 
