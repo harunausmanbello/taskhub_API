@@ -3,7 +3,6 @@ export default interface SignIn {
   password: string;
 }
 
-
 export interface SignInUser {
   _id: string;
   email: string;

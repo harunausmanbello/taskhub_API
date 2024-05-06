@@ -2,12 +2,12 @@ import _ from "lodash";
 import bcrypt from "bcrypt";
 
 import validatePassword from "../../validators/password_complexity";
-import SignUpInterface from "../../dtos/signup";
+import SignUp, { Mail } from "../../dtos/signup";
 import inputSchema from "../../validators/signup";
 import UserSignUp from "../schema/user";
 
 export default {
-  signup: async (bodyData: SignUpInterface) => {
+  signup: async (bodyData: SignUp) => {
     return validatePassword(bodyData.password)
       ? inputSchema
           .validateAsync(bodyData)
@@ -19,16 +19,16 @@ export default {
               salt
             );
 
-            const newUser: SignUpInterface = new UserSignUp({
+            const newUser: SignUp = new UserSignUp({
               ..._.pick(bodyData, ["firstname", "lastname", "matric", "email"]),
               password: hashedPassword,
             });
 
             return newUser
               .save()
-              .then((savedRegister: { _id: string; email: string }) => {
+              .then((savedRegister: Mail) => {
                 return {
-                  code: 201,
+                  success: true,
                   message: "User registration successful.",
                   userData: {
                     _id: savedRegister._id,
@@ -37,16 +37,29 @@ export default {
                 };
               })
               .catch((error: any) => {
-                return error.details
-                  ? error.details[0].message.status
-                  : error.message;
+                const errorMessage =
+                  error.code === 11000
+                    ? error.keyPattern.matric
+                      ? "The matric number provided already exists."
+                      : error.keyPattern.email
+                      ? "The email address provided already exists."
+                      : "Duplication error."
+                    : error.details?.[0]?.message?.status || error.message;
+
+                return {
+                  success: false,
+                  message: errorMessage,
+                };
               });
           })
           .catch((error: any) => {
-            return error.details
-              ? error.details[0].message.status
-              : error.message;
+            return {
+              success: false,
+              message: error.details
+                ? error.details[0].message.status
+                : error.message,
+            };
           })
-      : "Password not validate";
+      : { success: false, message: "Password not validated" };
   },
 };

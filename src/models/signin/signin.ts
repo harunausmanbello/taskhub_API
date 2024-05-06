@@ -39,7 +39,7 @@ export default {
               };
             }
 
-            if (user && isPasswordValid) {
+            if (user && isPasswordValid && user.isVerified) {
               const tokenFromConfig: string = config.get("JWT.TOKEN");
               const token: string = jwt.sign(
                 { _id: user._id, email: user.email },
@@ -49,6 +49,11 @@ export default {
               return {
                 code: 200,
                 token: token,
+              };
+            } else {
+              return {
+                message:
+                  "Account has not been verified yet, click on the Verify button sent to your email and try again.",
               };
             }
           })

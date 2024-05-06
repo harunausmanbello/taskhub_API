@@ -29,6 +29,6 @@ app.use("/", baseUrl);
 app.use("/signup", signUp);
 app.use("/signin", signIn);
 
-const port: number = config.get("DB.DB_PORT") || 3000;
+const port: number = config.get("DB.DB_PORT") || 5000;
 
 app.listen(port, () => console.log(`TaskHub is listening on port ${port}...`));

@@ -15,7 +15,7 @@ const verifyToken = (req: AuthRequest, res: Response, next: NextFunction) => {
     if (err) {
       return res.status(401).json({ message: "Invalid JWT token" });
     }
-    req.payloadData = payload; // Attach user information to the request object
+    req.payloadData = payload;
     next();
   });
 };

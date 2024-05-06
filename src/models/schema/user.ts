@@ -16,37 +16,36 @@ interface UserDocument extends Document {
 const schema: Schema<UserDocument> = new Schema({
   firstname: {
     type: String,
-    minlength: [3, "firstname must be at least 3 characters long"],
+    minlength: 3,
     lowercase: true,
-    required: [true, "firstname is required"],
+    required: true,
   },
   lastname: {
     type: String,
-    minlength: [3, "lastname must be at least 3 characters long"],
+    minlength: 3,
     lowercase: true,
-    required: [true, "lastname is required"],
+    required: true,
   },
   isLecturer: {
     type: Boolean,
-    default: false, 
+    default: false,
   },
   matric: {
     type: String,
-    minlength: [11, "Matric must be 11 characters long"],
-    maxlength: [11, "Matric must be 11 characters long"],
+    minlength: 11,
+    maxlength: 11,
     lowercase: true,
-    unique: true, 
+    unique: true,
     required: function (this: UserDocument) {
       return !this.isLecturer;
     },
   },
   email: {
     type: String,
-    required: [true, "Email is required"],
-    minlength: [5, "Email must be at least 5 characters long"],
+    required: true,
+    minlength: 5,
     lowercase: true,
-    unique: true, 
-    match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
+    unique: true,
   },
   token: {
     type: String,
@@ -58,14 +57,13 @@ const schema: Schema<UserDocument> = new Schema({
   },
   password: {
     type: String,
-    minlength: [6, "Password must be at least 6 characters long"],
-    maxlength: [244, "Password cannot exceed 244 characters"],
-    required: [true, "Password is required"],
+    minlength: 6,
+    maxlength: 244,
+    required: true,
   },
 });
 
 // Model for user registration
-const User: Model<UserDocument> =
-  mongoose.model<UserDocument>("users", schema);
+const User: Model<UserDocument> = mongoose.model<UserDocument>("users", schema);
 
 export default User;

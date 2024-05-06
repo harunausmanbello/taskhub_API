@@ -23,13 +23,13 @@ export interface MailOptions {
 export interface MailVerification {
   [x: string]: any;
   _id: string;
-  firstname: string;
-  lastname: string;
-  isLecturer: boolean;
-  matric: string;
-  email: string;
-  token: string;
+  // firstname: string;
+  // lastname: string;
+  // isLecturer: boolean;
+  // matric: string;
+  // email: string;
+  // token: string;
   isVerified: boolean;
-  password: string;
+  // password: string;
 }
 
