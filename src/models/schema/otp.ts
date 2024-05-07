@@ -25,7 +25,7 @@ const schema: Schema<OTPDocument> = new Schema({
     default: "active",
     required: true,
   },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
 });
 
 // Model for OTP

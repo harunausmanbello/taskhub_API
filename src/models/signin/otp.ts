@@ -5,13 +5,13 @@ import ejs from "ejs";
 import fs from "fs";
 
 import OtpSchema from "../schema/otp";
-import OtpInterface, { Mail, savedOtp, MailOptions } from "../../dtos/otp";
+import OtpInterface, { Mail, MailOptions } from "../../dtos/otp";
 
 import User from "../schema/user";
 
 export default {
-  otpmail: async (data: Mail) => {
-    const { _id, email }: Mail = data;
+  otpmail: async (mailBody: Mail) => {
+    const { _id, email }: Mail = mailBody;
 
     const otp: string = crypto.randomBytes(3).toString("hex");
 
@@ -57,22 +57,22 @@ export default {
       .then((info) => {
         return newOtp
           .save()
-          .then(async (savedOtp: savedOtp) => {
+          .then(async () => {
             return info.rejected.length === 0
-              ? { success: true, id: _id, message: "Email sent successfully: " }
-              : { success: false, message: "Email was rejected" };
+              ? { code: 200, message: "Email sent successfully" }
+              : { code: 207, message: "The email was rejected" };
           })
           .catch((error: any) => {
             return {
-              success: false,
+              code: 404,
               message: error.details ? error.details[0].message : error.message,
             };
           });
       })
       .catch(() => {
         return {
-          success: false,
-          message: "Error occurred while sending email",
+          success: 500,
+          message: "An error occurred while sending the emai",
         };
       });
   },

@@ -21,7 +21,8 @@ const schema = Joi.object({
       "string.min": "Password must be at least {#limit} characters long",
       "string.max": "Password must be at most {#limit} characters long",
       "any.required": "Password is required",
-      "any.invalid": "Invalid password, Password must be contain letters and numbers.",
+      "any.invalid":
+        "Invalid password, Password must be contain letters and numbers.",
     })
     .custom((value: string, helpers: Joi.CustomHelpers<string>) => {
       if (!validatePassword(value)) {

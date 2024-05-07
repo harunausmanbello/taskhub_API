@@ -39,7 +39,7 @@ const inputSchema = Joi.object({
       "string.min": "Password must be at least {#limit} characters long",
       "string.max": "Password must be at most {#limit} characters long",
       "any.required": "Password is required",
-      "any.invalid": "Password not validated", 
+      "any.invalid": "Password not validated",
     })
     .custom((value: string, helpers: Joi.CustomHelpers<string>) => {
       if (!validatePassword(value)) {
@@ -47,10 +47,10 @@ const inputSchema = Joi.object({
       }
       return value;
     }),
-  confirm_password: Joi.any()
-    .valid(Joi.ref("password"))
-    .required()
-    .messages({ "any.only": "Passwords do not match" , "any.required": "Confirm Password is required"}),
+  confirm_password: Joi.any().valid(Joi.ref("password")).required().messages({
+    "any.only": "Passwords do not match",
+    "any.required": "Confirm Password is required",
+  }),
 });
 
 export default inputSchema;

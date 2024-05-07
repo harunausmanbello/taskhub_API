@@ -1,18 +1,20 @@
 import Otp from "../schema/otp";
+
 export default {
-  verifyotp: async (payload: { id: string; otp: string }) => {
+  verifyotp: async (otpBody: { id: string; otp: string }) => {
     const userOtp: any | null = await Otp.findOne({
-      userId: payload.id,
-      status: "expired",
+      userId: otpBody.id,
+      status: "active",
     });
 
-    if (payload.otp === userOtp.otp) {
-      return { code: 200, message: "Your OTP is correct" };
-    } else {
-      return {
-        code: 400,
-        message: "Incorrect, Please try the correct otp sent to your email",
-      };
-    }
+    return userOtp
+      ? otpBody.otp === userOtp.otp
+        ? (await Otp.updateOne(
+            { _id: userOtp._id }, 
+            { $set: { status: "used" } } 
+          ),
+          { code: 200, message: "OTP verification successful." })
+        : { code: 400, message: "Incorrect OTP. Please enter the OTP sent to your email." }
+      : { code: 400, message: "OTP not found or has expired." };
   },
 };

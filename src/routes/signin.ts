@@ -22,19 +22,19 @@ router.post("/", (req: Request, res: Response) => {
   signInSchema
     .validateAsync(inputBody)
     .then(async (validatedData) => await signInModel.signin(validatedData))
-    .then(async (response) => {
+    .then(async (response: any) => {
       if (response.code === 200) {
         res.setHeader("x-auth-token", response.token);
-        const token = await otpMail.otpmail(response.userData);
-        res.status(200).send(token);
+        const otpResponse = await otpMail.otpmail(response.userData);
+        res.status(otpResponse.code).json({ message: otpResponse.message });
       } else {
-        res.status(401).send(response.message);
+        res.status(response.code).json({ message: response.message });
       }
     })
     .catch((error) =>
-      res
-        .status(400)
-        .send(error.details ? error.details[0].message : error.message)
+      res.status(400).json({
+        message: error.details ? error.details[0].message : error.message,
+      })
     );
 });
 
@@ -53,14 +53,15 @@ router.post(
         };
 
         const otpResponse = await verifyOtp.verifyotp(payloads);
-        otpResponse.code === 200
-          ? res.status(200).send(otpResponse.message)
-          : res.status(400).send(otpResponse.message);
+
+        res.status(otpResponse.code).json({ message: otpResponse.message });
       })
       .catch((error) => {
         res
           .status(400)
-          .send(error.details ? error.details[0].message : error.message);
+          .json({
+            message: error.details ? error.details[0].message : error.message,
+          });
       });
   }
 );

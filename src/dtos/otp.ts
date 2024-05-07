@@ -3,7 +3,7 @@ export default interface Otp {
   userId: string;
   otp: string;
   status: string;
-  createdAt: Date
+  createdAt: Date;
 }
 
 export interface Mail {

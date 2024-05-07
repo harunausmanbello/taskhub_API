@@ -9,12 +9,12 @@ import signInSchema from "../../validators/signin";
 import UserSignIn from "../schema/user";
 
 export default {
-  signin: async (bodyData: SignIn) => {
-    const { email, password }: SignIn = _.pick(bodyData, ["email", "password"]);
+  signin: async (signinBody: SignIn) => {
+    const { email, password }: SignIn = _.pick(signinBody, ["email", "password"]);
 
-    return validatePassword(bodyData.password)
+    return validatePassword(signinBody.password)
       ? signInSchema
-          .validateAsync(bodyData)
+          .validateAsync(signinBody)
           .then(async () => {
             const user: SignInUser | null = await UserSignIn.findOne({
               email: email,
@@ -22,7 +22,7 @@ export default {
 
             if (!user) {
               return {
-                code: 401,
+                code: 404,
                 message: "Invalid Email or Password",
               };
             }
@@ -34,7 +34,7 @@ export default {
 
             if (!isPasswordValid) {
               return {
-                code: 401,
+                code: 404,
                 message: "Invalid Email or Password",
               };
             }
@@ -51,18 +51,22 @@ export default {
                 token: token,
                 userData: {
                   _id: user._id,
-                  email: user.email
-                }
+                  email: user.email,
+                },
               };
             } else {
               return {
+                code: 404,
                 message:
-                  "Account has not been verified yet, click on the Verify button sent to your email and try again.",
+                  "Your account has not been verified. Please click the button sent to your email again",
               };
             }
           })
           .catch((error: any) => {
-            return error.details ? error.details[0].message : error.message;
+            return {
+              code: 400,
+              message: error.details ? error.details[0].message : error.message,
+            };
           })
       : "Invalid Password check";
   },

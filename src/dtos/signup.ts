@@ -8,7 +8,7 @@ export default interface SignUp {
   confirm_password?: string;
 }
 
-export  interface Mail {
+export interface Mail {
   _id: string;
   email: string;
 }
@@ -20,16 +20,8 @@ export interface MailOptions {
   html?: string;
 }
 
-export interface MailVerification {
+export interface AccountVerification {
   [x: string]: any;
   _id: string;
-  // firstname: string;
-  // lastname: string;
-  // isLecturer: boolean;
-  // matric: string;
-  // email: string;
-  // token: string;
   isVerified: boolean;
-  // password: string;
 }
-

@@ -7,8 +7,8 @@ import fs from "fs";
 import UserSignUp from "../schema/user";
 
 export default {
-  signupMail: async (data: Mail) => {
-    const { _id, email }: Mail = data;
+  signupmail: async (mailBody: Mail) => {
+    const { _id, email }: Mail = mailBody;
 
     const transporter = nodemailer.createTransport({
       service: "Gmail",
@@ -20,7 +20,7 @@ export default {
 
     const token: string = crypto.randomBytes(16).toString("hex");
 
-    const returnData: { _id: string; firstname: string } | null =
+    const userData: { _id: string; firstname: string } | null =
       await UserSignUp.findByIdAndUpdate(_id, { token: token });
 
     // Load the email template file
@@ -36,11 +36,11 @@ export default {
     const mailOptions: MailOptions = {
       from: "harunarrasheeed@gmail.com",
       to: email,
-      subject: "Email Verification",
+      subject: "Account Verification",
       html: compiledTemplate({
-        recipientName: returnData?.firstname,
+        recipientName: userData?.firstname,
         senderName: "Rashid",
-        url: `http://5000/signup/verify/${token}`,
+        url: `signup/verify/${token}`,
       }),
     };
 
@@ -48,13 +48,13 @@ export default {
       .sendMail(mailOptions)
       .then((info) => {
         return info.rejected.length === 0
-          ? { success: true, message: "Email sent successfully: " + token }
-          : { success: false, message: "Email was rejected" };
+          ? { code: 200, message: "Email sent successfully" }
+          : { code: 207, message: "The email was rejected" };
       })
       .catch((error) => {
         return {
-          success: false,
-          message: "Error occurred while sending email",
+          code: 500,
+          message: "An error occurred while sending the email",
         };
       });
   },

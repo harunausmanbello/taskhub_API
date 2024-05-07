@@ -7,20 +7,20 @@ import inputSchema from "../../validators/signup";
 import UserSignUp from "../schema/user";
 
 export default {
-  signup: async (bodyData: SignUp) => {
-    return validatePassword(bodyData.password)
+  signup: async (signupBody: SignUp) => {
+    return validatePassword(signupBody.password)
       ? inputSchema
-          .validateAsync(bodyData)
+          .validateAsync(signupBody)
           .then(async () => {
             const salt: string = await bcrypt.genSalt(10);
 
             const hashedPassword: string = await bcrypt.hash(
-              bodyData.password,
+              signupBody.password,
               salt
             );
 
             const newUser: SignUp = new UserSignUp({
-              ..._.pick(bodyData, ["firstname", "lastname", "matric", "email"]),
+              ..._.pick(signupBody, ["firstname", "lastname", "matric", "email"]),
               password: hashedPassword,
             });
 
@@ -28,8 +28,7 @@ export default {
               .save()
               .then((savedRegister: Mail) => {
                 return {
-                  success: true,
-                  message: "User registration successful.",
+                  code: 201,
                   userData: {
                     _id: savedRegister._id,
                     email: savedRegister.email,
@@ -47,19 +46,19 @@ export default {
                     : error.details?.[0]?.message?.status || error.message;
 
                 return {
-                  success: false,
+                  code: 409,
                   message: errorMessage,
                 };
               });
           })
           .catch((error: any) => {
             return {
-              success: false,
+              code: 400,
               message: error.details
                 ? error.details[0].message.status
                 : error.message,
             };
           })
-      : { success: false, message: "Password not validated" };
+      : { code: 400, message: "Password not validated" };
   },
 };
