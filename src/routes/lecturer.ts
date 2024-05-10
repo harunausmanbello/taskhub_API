@@ -1,17 +1,22 @@
 import { Router, Request, Response } from "express";
 import passport from "passport";
 import jwtToken from "../validators/token";
-import { ProfileData, AddUser } from "../dtos/lecturer";
-import { updateProfile, changePassword, addUser } from "../validators/lecturer";
+import { ProfileData, AddUser, AddCourse } from "../dtos/lecturer";
+import {
+  updateProfile,
+  changePassword,
+  addUser,
+  addCourse,
+} from "../validators/lecturer";
 import updateProfileData from "../models/lecturer/profile";
 import Passwords from "../dtos/lecturer";
 import { ChangePassword } from "../dtos/lecturer";
 import change_password from "../models/lecturer/change_password";
 import { lecturerAuthMiddleware } from "../middleware/authorization";
 import addUserModel from "../models/lecturer/add_user";
-import addUserMail from "../models/lecturer/email"
+import addCourseModel from "../models/lecturer/add_course";
+import addUserMail from "../models/lecturer/email";
 import verify_mail from "../models/lecturer/account_verification";
-
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -132,6 +137,7 @@ router.post(
   "/add-user",
   jwtToken,
   authenticateJWTPassport,
+  lecturerAuthMiddleware,
   (req: Request, res: Response) => {
     const inputBody = req.body as AddUser;
 
@@ -142,10 +148,11 @@ router.post(
         const { code, message, userData } = response;
         if (response && code === 201) {
           const addUserResponse: any = await addUserMail.adduser(userData);
-          const { code: addUserCode, message: addUserMessage } = addUserResponse;
-          res.status(addUserCode).json({ code:code, message: addUserMessage });
+          const { code: addUserCode, message: addUserMessage } =
+            addUserResponse;
+          res.status(addUserCode).json({ code: code, message: addUserMessage });
         } else {
-          res.status(code).json({ code:code, message: message });
+          res.status(code).json({ code: code, message: message });
         }
       })
       .catch((error) => {
@@ -156,6 +163,27 @@ router.post(
   }
 );
 
+router.post(
+  "/add-course",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  (req: Request, res: Response) => {
+    const courseBody = req.body as AddCourse;
+
+    addCourse
+      .validateAsync(courseBody)
+      .then(async (validatedData) => {
+        const addCourseResponse = await addCourseModel.addcourse(validatedData);
+        res.status(201).json(addCourseResponse);
+      })
+      .catch((error) => {
+        res.status(400).json({ code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
+  }
+);
 
 router.get("/verify-account/:token", async (req: Request, res: Response) => {
   const token: string = req.params.token;
@@ -163,7 +191,7 @@ router.get("/verify-account/:token", async (req: Request, res: Response) => {
     .verifyUser(token)
     .then((validatedData) => {
       const { code, message } = validatedData;
-      res.status(code).json({ code:code, message: message });
+      res.status(code).json({ code: code, message: message });
     })
     .catch((error: any) => {
       res.status(400).send({

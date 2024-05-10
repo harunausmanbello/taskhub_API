@@ -114,11 +114,31 @@ const addUser = Joi.object({
       }
       return value;
     }),
-    isLecturer: Joi.boolean().required().messages({
-      "boolean.base": "Lecturer must be a boolean",
-      "boolean.empty": "Lecturer cannot be empty",
-      "any.required": "Lecturer is required",
-    })
+  isLecturer: Joi.boolean().required().messages({
+    "boolean.base": "Lecturer must be a boolean",
+    "boolean.empty": "Lecturer cannot be empty",
+    "any.required": "Lecturer is required",
+  }),
+});
+const addCourse = Joi.object({
+  title: Joi.string().min(3).trim().lowercase().required().messages({
+    "string.base": "Course title must be a string",
+    "string.empty": "Course title cannot be empty",
+    "string.min": "Course title must be at least {#limit} characters long",
+    "any.required": "Course title is required",
+  }),
+  code: Joi.string().min(3).trim().lowercase().required().messages({
+    "string.base": "Course code must be a string",
+    "string.empty": "Course code cannot be empty",
+    "string.min": "Course code must be at least {#limit} characters long",
+    "any.required": "Course code is required",
+  }),
+  cu: Joi.number().min(3).required().messages({
+    "number.base": "Credit unit must be a number",
+    "number.empty": "Credit unit cannot be empty",
+    "number.min": "Credit unit must be at least {#limit} characters long",
+    "any.required": "Credit unit is required",
+  }),
 });
 
-export { changePassword, updateProfile, addUser };
+export { changePassword, updateProfile, addUser, addCourse };
