@@ -123,7 +123,7 @@ router.post(
 );
 
 router.get("/logout", (req: Request, res: Response) => {
-  res.setHeader("x-auth-token", "");
+  res.removeHeader("x-auth-token");
   res.status(200).json({ code: 200, message: "Logout successful" });
 });
 
