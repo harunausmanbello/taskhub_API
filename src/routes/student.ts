@@ -2,9 +2,10 @@ import { Router, Request, Response } from "express";
 import passport from "passport";
 import jwtToken from "../validators/token";
 import { studentAuthMiddleware } from "../middleware/authorization";
-import changePassword from "../validators/student_password";
-import Passwords, { ChangePassword } from "../dtos/student";
+import { changePassword, updateProfile } from "../validators/student";
+import Passwords, { ChangePassword, ProfileData } from "../dtos/student";
 import change_password from "../models/student/change_password";
+import updateProfileData from "../models/student/profile";
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -38,7 +39,7 @@ router.get(
   authenticateJWTPassport,
   studentAuthMiddleware,
   (req: Request, res: Response) => {
-    const userProfile: any | undefined = req.user;
+    const userProfile: any = req.user;
 
     if (userProfile) {
       const { firstname, lastname, matric, email } = userProfile;
@@ -49,6 +50,40 @@ router.get(
     } else {
       res.status(404).json({ code: 404, message: "User not found" });
     }
+  }
+);
+router.post(
+  "/profile",
+  jwtToken,
+  authenticateJWTPassport,
+  studentAuthMiddleware,
+  (req: Request, res: Response) => {
+    const userData = req.user as ProfileData;
+    const userBody = req.body as ProfileData;
+
+    updateProfile
+      .validateAsync(userBody)
+      .then(async (validatedData) => {
+        const profileData: ProfileData = {
+          _id: userData._id,
+          firstname: validatedData.firstname,
+          lastname: validatedData.lastname,
+          matric: validatedData.matric,
+          email: validatedData.email,
+        };
+
+        const profileResponse = await updateProfileData.updateprofile(
+          profileData
+        );
+
+        res.status(profileResponse.code).json(profileResponse);
+      })
+      .catch((error) => {
+        res.status(500).json({
+          code: 500,
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
   }
 );
 
@@ -76,15 +111,13 @@ router.post(
           Passwords
         );
 
-        res.status(passwordResponse.code).json({ message: passwordResponse });
+        res.status(passwordResponse.code).json(passwordResponse);
       })
       .catch((error) => {
-        res
-          .status(400)
-          .json({
-            code: 400,
-            message: error.details ? error.details[0].message : error.message,
-          });
+        res.status(400).json({
+          code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        });
       });
   }
 );
