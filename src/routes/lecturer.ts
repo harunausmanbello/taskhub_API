@@ -10,6 +10,8 @@ import change_password from "../models/lecturer/change_password";
 import { lecturerAuthMiddleware } from "../middleware/authorization";
 import addUserModel from "../models/lecturer/add_user";
 import addUserMail from "../models/lecturer/email"
+import verify_mail from "../models/lecturer/account_verification";
+
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -153,4 +155,20 @@ router.post(
       });
   }
 );
+
+
+router.get("/verify-account/:token", async (req: Request, res: Response) => {
+  const token: string = req.params.token;
+  return await verify_mail
+    .verifyUser(token)
+    .then((validatedData) => {
+      const { code, message } = validatedData;
+      res.status(code).json({ code:code, message: message });
+    })
+    .catch((error: any) => {
+      res.status(400).send({
+        message: error.details ? error.details[0].message : error.message,
+      });
+    });
+});
 export default router;

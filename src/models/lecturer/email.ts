@@ -40,7 +40,7 @@ export default {
       html: compiledTemplate({
         recipientName: userData?.firstname,
         senderName: "Rashid",
-        url: `signup/verify-account/${token}`,
+        url: `lecturer/verify-account/${token}`,
       }),
     };
 
