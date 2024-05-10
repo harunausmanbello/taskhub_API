@@ -9,6 +9,7 @@ import { ChangePassword } from "../dtos/lecturer";
 import change_password from "../models/lecturer/change_password";
 import { lecturerAuthMiddleware } from "../middleware/authorization";
 import addUserModel from "../models/lecturer/add_user";
+import addUserMail from "../models/lecturer/email"
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -135,8 +136,15 @@ router.post(
     addUser
       .validateAsync(inputBody)
       .then(async (validatedData) => await addUserModel.adduser(validatedData))
-      .then((response) => {
-        res.status(response.code).json(response);
+      .then(async (response) => {
+        const { code, message, userData } = response;
+        if (response && code === 201) {
+          const addUserResponse: any = await addUserMail.adduser(userData);
+          const { code: addUserCode, message: addUserMessage } = addUserResponse;
+          res.status(addUserCode).json({ code:code, message: addUserMessage });
+        } else {
+          res.status(code).json({ code:code, message: message });
+        }
       })
       .catch((error) => {
         res.status(400).json({

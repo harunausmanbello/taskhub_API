@@ -27,4 +27,23 @@ export default interface Passwords {
     password: string;
     isLecturer: boolean
   }
+
+
+  export interface Mail {
+    _id: string;
+    email: string;
+  }
+  
+  export interface MailOptions {
+    from: string;
+    to: string;
+    subject: string;
+    html?: string;
+  }
+  
+  export interface AccountVerification {
+    [x: string]: any;
+    _id: string;
+    isVerified: boolean;
+  }
   

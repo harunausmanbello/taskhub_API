@@ -1,13 +1,13 @@
 import crypto from "crypto";
 import nodemailer from "nodemailer";
-import { Mail, MailOptions } from "../../dtos/signup";
+import { Mail, MailOptions } from "../../dtos/lecturer";
 import ejs from "ejs";
 import fs from "fs";
 
 import UserSignUp from "../schema/user";
 
 export default {
-  signupmail: async (mailBody: Mail) => {
+  adduser: async (mailBody: Mail) => {
     const { _id, email }: Mail = mailBody;
 
     const transporter = nodemailer.createTransport({
@@ -25,7 +25,7 @@ export default {
 
     // Load the email template file
     const templateFile: string = fs.readFileSync(
-      "./src/views/signup/student/email.ejs",
+      "./src/views/signup/lecturer/email.ejs",
       "utf8"
     );
 

@@ -18,7 +18,7 @@ router.post("/", async (req: Request, res: Response) => {
       if (response && code === 201) {
         const signUpResponse: any = await signupMail.signupmail(userData);
         const { code: signUpCode, message: signUpMessage } = signUpResponse;
-        res.status(signUpCode).json({ code:code, message: signUpMessage });
+        res.status(signUpCode).json({ code:signUpCode, message: signUpMessage });
       } else {
         res.status(code).json({ code:code, message: message });
       }
