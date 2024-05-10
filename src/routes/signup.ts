@@ -14,11 +14,13 @@ router.post("/", async (req: Request, res: Response) => {
     .validateAsync(inputBody)
     .then(async (validatedData) => await signupInputs.signup(validatedData))
     .then(async (response) => {
-      if (response && response.code === 201) {
-        const signUpResponse: any = await signupMail.signupmail(response.userData);
-        res.status(signUpResponse.code).json({ message: signUpResponse.message });
+      const { code, message, userData } = response;
+      if (response && code === 201) {
+        const signUpResponse: any = await signupMail.signupmail(userData);
+        const { code: signUpCode, message: signUpMessage } = signUpResponse;
+        res.status(signUpCode).json({ code:code, message: signUpMessage });
       } else {
-        res.status(response.code).json({ message: response.message });
+        res.status(code).json({ code:code, message: message });
       }
     })
     .catch((error) => {
@@ -33,7 +35,8 @@ router.get("/verify-account/:token", async (req: Request, res: Response) => {
   return await verify_mail
     .verifyUser(token)
     .then((validatedData) => {
-      res.status(validatedData.code).json({ message: validatedData.message });
+      const { code, message } = validatedData;
+      res.status(code).json({ code:code, message: message });
     })
     .catch((error: any) => {
       res.status(400).send({

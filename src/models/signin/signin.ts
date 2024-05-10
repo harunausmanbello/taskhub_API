@@ -6,7 +6,7 @@ import config from "config";
 import SignIn, { SignInUser } from "../../dtos/signin";
 import validatePassword from "../../validators/password_complexity";
 import signInSchema from "../../validators/signin";
-import UserSignIn from "../schema/user";
+import User from "../schema/user";
 
 export default {
   signin: async (signinBody: SignIn) => {
@@ -16,7 +16,7 @@ export default {
       ? signInSchema
           .validateAsync(signinBody)
           .then(async () => {
-            const user: SignInUser | null = await UserSignIn.findOne({
+            const user: SignInUser | null = await User.findOne({
               email: email,
             });
 
@@ -42,16 +42,15 @@ export default {
             if (user && isPasswordValid && user.isVerified) {
               const tokenFromConfig: string = config.get("JWT.TOKEN");
               const token: string = jwt.sign(
-                { _id: user._id, email: user.email },
-                tokenFromConfig,
-                { expiresIn: "1h" }
+                { _id: user._id, email: user.email, isLecturer: user.isLecturer },
+                tokenFromConfig
               );
               return {
                 code: 200,
                 token: token,
                 userData: {
                   _id: user._id,
-                  email: user.email,
+                  email: user.email
                 },
               };
             } else {

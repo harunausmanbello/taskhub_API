@@ -10,6 +10,10 @@ import updateExpiredOtps from "../config/otp";
 import baseUrl from "./routes/base";
 import signUp from "./routes/signup";
 import signIn from "./routes/signin";
+import lecturer from "./routes/lecturer";
+import student from "./routes/student";
+
+const app = express();
 
 dbConnection; //calling the dbConnection in app.ts
 initializePassport(passport); // Pass initialized Passport instance to the middleware
@@ -18,8 +22,6 @@ updateExpiredOtps();
 setInterval(() => {
   updateExpiredOtps();
 }, 1000);
-
-const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -34,6 +36,9 @@ app.set("views", "./src/views");
 app.use("/", baseUrl);
 app.use("/signup", signUp);
 app.use("/signin", signIn);
+app.use("/lecturer", lecturer);
+app.use("/student", student);
+
 
 const port: number = config.get("DB.DB_PORT") || 5000;
 

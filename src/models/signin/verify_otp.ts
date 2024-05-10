@@ -15,6 +15,6 @@ export default {
           ),
           { code: 200, message: "OTP verification successful." })
         : { code: 400, message: "Incorrect OTP. Please enter the OTP sent to your email." }
-      : { code: 400, message: "OTP not found or has expired." };
+      : { code: 400, message: "OTP has been used or has expired." };
   },
 };
