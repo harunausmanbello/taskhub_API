@@ -18,4 +18,13 @@ export default interface Passwords {
     lastname: string;
     email: string;
   }
+
+  export interface AddUser {
+    [x: string]: any;
+    firstname: string;
+    lastname: string;
+    email: string;
+    password: string;
+    isLecturer: boolean
+  }
   

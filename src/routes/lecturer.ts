@@ -1,13 +1,15 @@
 import { Router, Request, Response } from "express";
 import passport from "passport";
 import jwtToken from "../validators/token";
-import { ProfileData } from "../dtos/lecturer";
-import { updateProfile, changePassword } from "../validators/lecturer";
+import { ProfileData, AddUser } from "../dtos/lecturer";
+import { updateProfile, changePassword, addUser } from "../validators/lecturer";
 import updateProfileData from "../models/lecturer/profile";
 import Passwords from "../dtos/lecturer";
 import { ChangePassword } from "../dtos/lecturer";
 import change_password from "../models/lecturer/change_password";
 import { lecturerAuthMiddleware } from "../middleware/authorization";
+import addUserModel from "../models/lecturer/add_user";
+
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
 });
@@ -123,4 +125,24 @@ router.post(
   }
 );
 
+router.post(
+  "/add-user",
+  jwtToken,
+  authenticateJWTPassport,
+  (req: Request, res: Response) => {
+    const inputBody = req.body as AddUser;
+
+    addUser
+      .validateAsync(inputBody)
+      .then(async (validatedData) => await addUserModel.adduser(validatedData))
+      .then((response) => {
+        res.status(response.code).json(response);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
+  }
+);
 export default router;

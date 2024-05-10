@@ -2,41 +2,41 @@ import _ from "lodash";
 import bcrypt from "bcrypt";
 
 import validatePassword from "../../validators/password_complexity";
-import SignUp, { Mail } from "../../dtos/signup";
-import inputSchema from "../../validators/signup";
-import UserSignUp from "../schema/user";
+import { AddUser } from "../../dtos/lecturer";
+import { addUser } from "../../validators/lecturer";
+import User from "../schema/user";
 
 export default {
-  signup: async (signupBody: SignUp) => {
-    return validatePassword(signupBody.password)
-      ? inputSchema
-          .validateAsync(signupBody)
+  adduser: async (addUserBody: AddUser) => {
+    return validatePassword(addUserBody.password)
+      ? addUser
+          .validateAsync(addUserBody)
           .then(async () => {
             const salt: string = await bcrypt.genSalt(10);
 
             const hashedPassword: string = await bcrypt.hash(
-              signupBody.password,
+              addUserBody.password,
               salt
             );
 
-            const newUser: SignUp = new UserSignUp({
-              ..._.pick(signupBody, [
+            const newUser: AddUser = new User({
+              ..._.pick(addUserBody, [
                 "firstname",
                 "lastname",
-                "matric",
                 "email",
+                "isLecturer",
               ]),
               password: hashedPassword,
             });
 
             return newUser
               .save()
-              .then((savedRegister: Mail) => {
+              .then((user: {_id: string, email: string}) => {
                 return {
                   code: 201,
                   userData: {
-                    _id: savedRegister._id,
-                    email: savedRegister.email,
+                    _id: user._id,
+                    email: user.email,
                   },
                 };
               })

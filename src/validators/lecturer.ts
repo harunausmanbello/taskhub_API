@@ -75,4 +75,50 @@ const updateProfile = Joi.object({
   }),
 });
 
-export { changePassword, updateProfile };
+const addUser = Joi.object({
+  firstname: Joi.string().min(3).trim().lowercase().required().messages({
+    "string.base": "First name must be a string",
+    "string.empty": "First name cannot be empty",
+    "string.min": "First name must be at least {#limit} characters long",
+    "any.required": "First name is required",
+  }),
+  lastname: Joi.string().min(3).trim().lowercase().required().messages({
+    "string.base": "Last name must be a string",
+    "string.empty": "Last name cannot be empty",
+    "string.min": "Last name must be at least {#limit} characters long",
+    "any.required": "Last name is required",
+  }),
+  email: Joi.string().min(5).email().trim().lowercase().required().messages({
+    "string.base": "Email must be a string",
+    "string.empty": "Email cannot be empty",
+    "string.min": "Email must be at least {#limit} characters long",
+    "string.email": "Email must be a valid email address",
+    "any.required": "Email is required",
+  }),
+  password: Joi.string()
+    .min(6)
+    .max(244)
+    .trim()
+    .required()
+    .messages({
+      "string.base": "Password must be a string",
+      "string.empty": "Password cannot be empty",
+      "string.min": "Password must be at least {#limit} characters long",
+      "string.max": "Password must be at most {#limit} characters long",
+      "any.required": "Password is required",
+      "any.invalid": "Password not validated",
+    })
+    .custom((value: string, helpers: Joi.CustomHelpers<string>) => {
+      if (!validatePassword(value)) {
+        return helpers.error("any.invalid");
+      }
+      return value;
+    }),
+    isLecturer: Joi.boolean().required().messages({
+      "boolean.base": "Lecturer must be a boolean",
+      "boolean.empty": "Lecturer cannot be empty",
+      "any.required": "Lecturer is required",
+    })
+});
+
+export { changePassword, updateProfile, addUser };
