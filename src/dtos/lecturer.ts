@@ -60,3 +60,11 @@ export interface UpdateCourse {
   code: string;
   cu: number;
 }
+
+export interface UpdateUser {
+  [x: string]: any;
+  _id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+}

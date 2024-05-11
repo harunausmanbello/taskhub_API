@@ -1,12 +1,13 @@
 import { Router, Request, Response } from "express";
 import passport from "passport";
 import jwtToken from "../validators/token";
-import { ProfileData, AddUser, AddCourse } from "../dtos/lecturer";
+import { ProfileData, AddUser, AddCourse, UpdateUser } from "../dtos/lecturer";
 import {
   updateProfile,
   changePassword,
   addUser,
   addCourse,
+  updateUser,
 } from "../validators/lecturer";
 import updateProfileData from "../models/lecturer/profile";
 import Passwords from "../dtos/lecturer";
@@ -20,6 +21,8 @@ import verify_mail from "../models/lecturer/account_verification";
 import viewCourses from "../models/lecturer/courses";
 import updateCourseModel from "../models/lecturer/update_course";
 import deleteCourse from "../models/lecturer/delete_course";
+import viewUsers from "../models/lecturer/users";
+import updateUserModel from "../models/lecturer/update_user";
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -136,6 +139,17 @@ router.post(
   }
 );
 
+router.get(
+  "/users",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const response = await viewUsers.viewusers();
+    res.status(200).json(response);
+  }
+);
+
 router.post(
   "/add-user",
   jwtToken,
@@ -166,6 +180,47 @@ router.post(
   }
 );
 
+router.put(
+  "/user/:id",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const userBody = req.body as UpdateUser;
+
+    updateUser
+      .validateAsync(userBody)
+      .then(async () => {
+        const payload = {
+          _id: id,
+          firstname: userBody.firstname,
+          lastname: userBody.lastname,
+          email: userBody.email,
+        };
+        const response = await updateUserModel.updateuser(payload);
+        res.status(response.code).json(response);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
+  }
+);
+
+router.get(
+  "/courses",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const coursesResponse = await viewCourses.viewcourses();
+    res.status(200).json(coursesResponse);
+  }
+);
+
 router.post(
   "/add-course",
   jwtToken,
@@ -186,17 +241,6 @@ router.post(
           message: error.details ? error.details[0].message : error.message,
         });
       });
-  }
-);
-
-router.get(
-  "/courses",
-  jwtToken,
-  authenticateJWTPassport,
-  lecturerAuthMiddleware,
-  async (req: Request, res: Response) => {
-    const coursesResponse = await viewCourses.viewcourses();
-    res.status(200).json(coursesResponse);
   }
 );
 
@@ -231,6 +275,7 @@ router.put(
       });
   }
 );
+
 router.delete(
   "/course/:id",
   jwtToken,
@@ -242,6 +287,7 @@ router.delete(
     res.status(Response.code).json(Response);
   }
 );
+
 router.get("/verify-account/:token", async (req: Request, res: Response) => {
   const token: string = req.params.token;
   return await verify_mail
@@ -256,4 +302,5 @@ router.get("/verify-account/:token", async (req: Request, res: Response) => {
       });
     });
 });
+
 export default router;

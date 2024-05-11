@@ -120,6 +120,29 @@ const addUser = Joi.object({
     "any.required": "Lecturer is required",
   }),
 });
+
+const updateUser = Joi.object({
+  firstname: Joi.string().min(3).trim().lowercase().required().messages({
+    "string.base": "First name must be a string",
+    "string.empty": "First name cannot be empty",
+    "string.min": "First name must be at least {#limit} characters long",
+    "any.required": "First name is required",
+  }),
+  lastname: Joi.string().min(3).trim().lowercase().required().messages({
+    "string.base": "Last name must be a string",
+    "string.empty": "Last name cannot be empty",
+    "string.min": "Last name must be at least {#limit} characters long",
+    "any.required": "Last name is required",
+  }),
+  email: Joi.string().min(5).email().trim().lowercase().required().messages({
+    "string.base": "Email must be a string",
+    "string.empty": "Email cannot be empty",
+    "string.min": "Email must be at least {#limit} characters long",
+    "string.email": "Email must be a valid email address",
+    "any.required": "Email is required",
+  }),
+});
+
 const addCourse = Joi.object({
   title: Joi.string().min(3).trim().lowercase().required().messages({
     "string.base": "Course title must be a string",
@@ -141,4 +164,4 @@ const addCourse = Joi.object({
   }),
 });
 
-export { changePassword, updateProfile, addUser, addCourse };
+export { changePassword, updateProfile, addUser, addCourse, updateUser };
