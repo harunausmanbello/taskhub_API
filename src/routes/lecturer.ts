@@ -316,4 +316,9 @@ router.get("/verify-account/:token", async (req: Request, res: Response) => {
     });
 });
 
+router.get("/logout", (req: Request, res: Response) => {
+  res.removeHeader("x-auth-token");
+  res.status(200).json({ code: 200, message: "Logout successful" });
+});
+
 export default router;

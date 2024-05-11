@@ -6,6 +6,8 @@ import { changePassword, updateProfile } from "../validators/student";
 import Passwords, { ChangePassword, ProfileData } from "../dtos/student";
 import change_password from "../models/student/change_password";
 import updateProfileData from "../models/student/profile";
+import enrollCourse from "../models/student/enroll_course";
+import viewCourses from "../models/student/courses";
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -52,6 +54,7 @@ router.get(
     }
   }
 );
+
 router.post(
   "/profile",
   jwtToken,
@@ -119,6 +122,42 @@ router.post(
           message: error.details ? error.details[0].message : error.message,
         });
       });
+  }
+);
+
+router.get(
+  "/courses",
+  jwtToken,
+  authenticateJWTPassport,
+  studentAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const coursesResponse = await viewCourses.viewcourses();
+    res.status(200).json(coursesResponse);
+  }
+);
+
+router.get(
+  "/enroll-course",
+  jwtToken,
+  authenticateJWTPassport,
+  studentAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const userInfo: any = req.user;
+    const courseId: any = req.query.courseId;
+
+    if (userInfo) {
+      const { _id: studentId } = userInfo;
+
+      const payload = {
+        studentId: studentId,
+        courseId: courseId,
+      };
+
+      const response = await enrollCourse.enrollcourse(payload);
+      res.status(response.code).json(response);
+    } else {
+      res.status(404).json({ code: 404, message: "User not found" });
+    }
   }
 );
 

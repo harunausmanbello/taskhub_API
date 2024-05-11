@@ -19,3 +19,8 @@ export interface ProfileData {
   matric: string;
   email: string;
 }
+
+export interface EnrollCourseIds {
+  studentId: string;
+  courseId: string;
+}
