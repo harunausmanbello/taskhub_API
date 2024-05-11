@@ -21,6 +21,7 @@ import verify_mail from "../models/lecturer/account_verification";
 import viewCourses from "../models/lecturer/courses";
 import updateCourseModel from "../models/lecturer/update_course";
 import deleteCourse from "../models/lecturer/delete_course";
+import deleteUser from "../models/lecturer/delete_user";
 import viewUsers from "../models/lecturer/users";
 import updateUserModel from "../models/lecturer/update_user";
 
@@ -207,6 +208,18 @@ router.put(
           message: error.details ? error.details[0].message : error.message,
         });
       });
+  }
+);
+
+router.delete(
+  "/user/:id",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const Response = await deleteUser.deleteuser(id);
+    res.status(Response.code).json(Response);
   }
 );
 
