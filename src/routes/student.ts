@@ -131,7 +131,10 @@ router.get(
   authenticateJWTPassport,
   studentAuthMiddleware,
   async (req: Request, res: Response) => {
-    const coursesResponse = await viewCourses.viewcourses();
+    const userInfo: any = req.user;
+    const { _id: studentId } = userInfo;
+    
+    const coursesResponse = await viewCourses.viewcourses(studentId);
     res.status(200).json(coursesResponse);
   }
 );
