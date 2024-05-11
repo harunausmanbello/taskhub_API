@@ -52,3 +52,11 @@ export interface AddCourse {
   code: string;
   cu: number;
 }
+
+export interface UpdateCourse {
+  [x: string]: any;
+  id: string;
+  title: string;
+  code: string;
+  cu: number;
+}

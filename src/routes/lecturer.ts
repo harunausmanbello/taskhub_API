@@ -17,6 +17,9 @@ import addUserModel from "../models/lecturer/add_user";
 import addCourseModel from "../models/lecturer/add_course";
 import addUserMail from "../models/lecturer/email";
 import verify_mail from "../models/lecturer/account_verification";
+import viewCourses from "../models/lecturer/courses";
+import updateCourseModel from "../models/lecturer/update_course";
+import deleteCourse from "../models/lecturer/delete_course";
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -175,16 +178,70 @@ router.post(
       .validateAsync(courseBody)
       .then(async (validatedData) => {
         const addCourseResponse = await addCourseModel.addcourse(validatedData);
-        res.status(201).json(addCourseResponse);
+        res.status(addCourseResponse.code).json(addCourseResponse);
       })
       .catch((error) => {
-        res.status(400).json({ code: 400,
+        res.status(400).json({
+          code: 400,
           message: error.details ? error.details[0].message : error.message,
         });
       });
   }
 );
 
+router.get(
+  "/courses",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const coursesResponse = await viewCourses.viewcourses();
+    res.status(200).json(coursesResponse);
+  }
+);
+
+router.put(
+  "/course/:id",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const courseBody = req.body as AddCourse;
+
+    addCourse
+      .validateAsync(courseBody)
+      .then(async () => {
+        const payload = {
+          id: id,
+          title: courseBody.title,
+          code: courseBody.code,
+          cu: courseBody.cu,
+        };
+        const updateCourseResponse = await updateCourseModel.updatecourse(
+          payload
+        );
+        res.status(updateCourseResponse.code).json(updateCourseResponse);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
+  }
+);
+router.delete(
+  "/course/:id",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const Response = await deleteCourse.deletecourse(id);
+    res.status(Response.code).json(Response);
+  }
+);
 router.get("/verify-account/:token", async (req: Request, res: Response) => {
   const token: string = req.params.token;
   return await verify_mail
