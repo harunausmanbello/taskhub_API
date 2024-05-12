@@ -16,6 +16,7 @@ import viewAssignment from "../models/student/assignment";
 import viewCourseAssignment from "../models/student/course_assignment";
 import submitAssignment from "../models/student/submit_assignment";
 import uploadfile from "../../config/multer";
+import viewGrade from "../models/student/view_grade";
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -235,6 +236,18 @@ router.get(
   }
 );
 
+router.get(
+  "/assignment/grade",
+  jwtToken,
+  authenticateJWTPassport,
+  studentAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const reqUser: any = req.user;
+    const studentId: string = reqUser._id;
+    const response = await viewGrade.viewgrade(studentId);
+    res.status(200).json(response);
+  }
+);
 
 router.get("/logout", (req: Request, res: Response) => {
   res.removeHeader("x-auth-token");
