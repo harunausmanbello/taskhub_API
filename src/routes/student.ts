@@ -8,6 +8,7 @@ import change_password from "../models/student/change_password";
 import updateProfileData from "../models/student/profile";
 import enrollCourse from "../models/student/enroll_course";
 import viewCourses from "../models/student/courses";
+import viewAssignment from "../models/student/assignment"
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -161,6 +162,20 @@ router.get(
     } else {
       res.status(404).json({ code: 404, message: "User not found" });
     }
+  }
+);
+
+router.get(
+  "/assignment",
+  jwtToken,
+  authenticateJWTPassport,
+  studentAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const userInfo: any = req.user;
+    const { _id: studentId } = userInfo;
+    
+    const coursesResponse = await viewAssignment.viewassignment(studentId);
+    res.status(200).json(coursesResponse);
   }
 );
 
