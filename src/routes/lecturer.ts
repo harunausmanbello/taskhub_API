@@ -36,6 +36,8 @@ import assignAssignment from "../models/lecturer/assignment";
 
 import viewAssignment from "../models/lecturer/view_assignment";
 
+import viewFile from "../models/lecturer/view_file";
+
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
 });
@@ -350,6 +352,23 @@ router.get(
   async (req: Request, res: Response) => {
     const response = await viewAssignment.viewassignment();
     res.status(200).json(response);
+  }
+);
+
+router.get(
+  "/assignment/file",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const studentMatric: any = req.query.matric;
+    const response = await viewFile.viewfile(studentMatric);
+    const filePath = response.file;
+    if (filePath) {
+      res.status(200).sendFile(filePath);
+    } else {
+      res.status(response.code).json(response);
+    }
   }
 );
 

@@ -101,7 +101,7 @@ const fileSchema = Joi.object({
     .messages({
       "object.base": "File must be an object",
       "any.required": "File is required",
-      "any.invalid": "Invalid file type. Only .pdf, .docx files are allowed",
+      "any.invalid": "Invalid file type. Only .txt and .docx files are allowed",
     }),
 });
 

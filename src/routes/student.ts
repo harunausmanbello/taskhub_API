@@ -235,20 +235,7 @@ router.get(
   }
 );
 
-// Define the file upload endpoint
-router.post("/file", uploadfile, (req: Request, res: Response) => {
-  // Access the uploaded file information from req.file
-  const fileName: any = req.file?.filename;
 
-  // Store the file into file system / database (if needed)
-
-  // Send the response
-  if (fileName)
-    res
-      .status(200)
-      .json({ message: `File uploaded successfully: ${fileName}` });
-  res.status(400).json({ message: "file is not uploaded" });
-});
 router.get("/logout", (req: Request, res: Response) => {
   res.removeHeader("x-auth-token");
   res.status(200).json({ code: 200, message: "Logout successful" });

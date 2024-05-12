@@ -37,6 +37,6 @@ const schema: Schema<SubmitsDocument> = new Schema({
 
 // Model for Submits registration
 const Submits: Model<SubmitsDocument> =
-  mongoose.model<SubmitsDocument>("SubmitAssignment", schema);
+  mongoose.model<SubmitsDocument>("SubmitAssignments", schema);
 
 export default Submits;
