@@ -5,6 +5,7 @@ import helmet from "helmet";
 import passport from "passport";
 import initializePassport from "./middleware/authentication";
 import updateExpiredOtps from "../config/otp";
+import updateExpiredCoursesStatus from "../config/due";
 
 //routes modules
 import baseUrl from "./routes/base";
@@ -17,10 +18,10 @@ const app = express();
 
 dbConnection; //calling the dbConnection in app.ts
 initializePassport(passport); // Pass initialized Passport instance to the middleware
-updateExpiredOtps();
 
 setInterval(() => {
   updateExpiredOtps();
+  updateExpiredCoursesStatus();
 }, 1000);
 
 app.use(express.json());
@@ -38,7 +39,6 @@ app.use("/signup", signUp);
 app.use("/signin", signIn);
 app.use("/lecturer", lecturer);
 app.use("/student", student);
-
 
 const port: number = config.get("DB.DB_PORT") || 5000;
 

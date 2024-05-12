@@ -8,8 +8,8 @@ import change_password from "../models/student/change_password";
 import updateProfileData from "../models/student/profile";
 import enrollCourse from "../models/student/enroll_course";
 import viewCourses from "../models/student/courses";
-import viewAssignment from "../models/student/assignment"
-
+import viewAssignment from "../models/student/assignment";
+import viewCourseAssignment from "../models/student/course_assignment";
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
 });
@@ -134,7 +134,7 @@ router.get(
   async (req: Request, res: Response) => {
     const userInfo: any = req.user;
     const { _id: studentId } = userInfo;
-    
+
     const coursesResponse = await viewCourses.viewcourses(studentId);
     res.status(200).json(coursesResponse);
   }
@@ -166,18 +166,34 @@ router.get(
 );
 
 router.get(
-  "/assignment",
+  "/assignments",
   jwtToken,
   authenticateJWTPassport,
   studentAuthMiddleware,
   async (req: Request, res: Response) => {
     const userInfo: any = req.user;
     const { _id: studentId } = userInfo;
-    
-    const coursesResponse = await viewAssignment.viewassignment(studentId);
-    res.status(200).json(coursesResponse);
+
+    const response = await viewAssignment.viewassignment(studentId);
+    res.status(200).json(response);
   }
 );
+
+router.get(
+  "/assignment",
+  jwtToken,
+  authenticateJWTPassport,
+  studentAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const queryParams: any = req.query.courseId;
+    const courseId: string = queryParams;
+
+    const response = await viewCourseAssignment.viewcourseassignment(courseId);
+    res.status(200).json(response);
+  }
+);
+
+
 
 router.get("/logout", (req: Request, res: Response) => {
   res.removeHeader("x-auth-token");
