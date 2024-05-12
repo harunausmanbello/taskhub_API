@@ -1,5 +1,6 @@
 import Joi from "joi";
 import validatePassword from "./password_complexity";
+import validateFileExtension from "./file_type";
 
 // Define input schema with password complexity validation
 const changePassword = Joi.object({
@@ -82,4 +83,26 @@ const updateProfile = Joi.object({
   }),
 });
 
-export { changePassword, updateProfile };
+const fileSchema = Joi.object({
+  studentId: Joi.string().required().messages({
+    "string.base": "Student Id must be a string",
+    "string.empty": "Student Id cannot be empty",
+    "any.required": "Student Id is required",
+  }),
+  assignmentId: Joi.string().required().messages({
+    "string.base": "Assignment Id must be a string",
+    "string.empty": "Assignment Id cannot be empty",
+    "any.required": "Assignment Id is required",
+  }),
+  file: Joi.object({
+    originalname: Joi.string().required(),
+  })
+    .custom(validateFileExtension)
+    .messages({
+      "object.base": "File must be an object",
+      "any.required": "File is required",
+      "any.invalid": "Invalid file type. Only .pdf, .docx files are allowed",
+    }),
+});
+
+export { changePassword, updateProfile, fileSchema };

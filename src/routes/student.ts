@@ -2,7 +2,11 @@ import { Router, Request, Response } from "express";
 import passport from "passport";
 import jwtToken from "../validators/token";
 import { studentAuthMiddleware } from "../middleware/authorization";
-import { changePassword, updateProfile } from "../validators/student";
+import {
+  changePassword,
+  updateProfile,
+  fileSchema,
+} from "../validators/student";
 import Passwords, { ChangePassword, ProfileData } from "../dtos/student";
 import change_password from "../models/student/change_password";
 import updateProfileData from "../models/student/profile";
@@ -10,6 +14,9 @@ import enrollCourse from "../models/student/enroll_course";
 import viewCourses from "../models/student/courses";
 import viewAssignment from "../models/student/assignment";
 import viewCourseAssignment from "../models/student/course_assignment";
+import submitAssignment from "../models/student/submit_assignment";
+import uploadfile from "../../config/multer";
+
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
 });
@@ -83,8 +90,8 @@ router.post(
         res.status(profileResponse.code).json(profileResponse);
       })
       .catch((error) => {
-        res.status(500).json({
-          code: 500,
+        res.status(400).json({
+          code: 400,
           message: error.details ? error.details[0].message : error.message,
         });
       });
@@ -193,8 +200,55 @@ router.get(
   }
 );
 
+router.get(
+  "/assignment/course",
+  jwtToken,
+  authenticateJWTPassport,
+  studentAuthMiddleware,
+  uploadfile,
+  async (req: Request, res: Response) => {
+    const queryParams: any = req.query.assignmentId;
+    const reqUser: any = req.user;
 
+    const payload = {
+      studentId: reqUser._id.toString(),
+      assignmentId: queryParams,
+      file: { originalname: req.file?.filename },
+    };
+    fileSchema
+      .validateAsync(payload)
+      .then(async (data) => {
+        const payloads = {
+          studentId: data.studentId,
+          assignmentId: data.assignmentId,
+          file: data.file,
+        };
+        const response = await submitAssignment.submitassignment(payloads);
+        res.status(response.code).json(response);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
+  }
+);
 
+// Define the file upload endpoint
+router.post("/file", uploadfile, (req: Request, res: Response) => {
+  // Access the uploaded file information from req.file
+  const fileName: any = req.file?.filename;
+
+  // Store the file into file system / database (if needed)
+
+  // Send the response
+  if (fileName)
+    res
+      .status(200)
+      .json({ message: `File uploaded successfully: ${fileName}` });
+  res.status(400).json({ message: "file is not uploaded" });
+});
 router.get("/logout", (req: Request, res: Response) => {
   res.removeHeader("x-auth-token");
   res.status(200).json({ code: 200, message: "Logout successful" });

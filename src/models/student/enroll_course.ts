@@ -29,7 +29,7 @@ export default {
               "Unknown error occurred.";
 
         return {
-          code: 409,
+          code: error.code === 11000 ? 409 : 500,
           message: errorMessage,
         };
       });

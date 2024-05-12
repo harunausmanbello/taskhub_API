@@ -40,7 +40,7 @@ export default {
       })
       .catch((error: any) => {
         return {
-          code: 404,
+          code: 500,
           message: "Password update failed",
         };
       });
