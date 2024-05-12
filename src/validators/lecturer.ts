@@ -164,4 +164,29 @@ const addCourse = Joi.object({
   }),
 });
 
-export { changePassword, updateProfile, addUser, addCourse, updateUser };
+const assignmentSchema = Joi.object({
+  name: Joi.string().min(3).trim().lowercase().required().messages({
+    "string.base": "Name must be a string",
+    "string.empty": "Name cannot be empty",
+    "string.min": "Name must be at least {#limit} characters long",
+    "any.required": "Name is required",
+  }),
+  description: Joi.string().min(3).trim().lowercase().required().messages({
+    "string.base": "Description must be a string",
+    "string.empty": "Description cannot be empty",
+    "string.min": "Description must be at least {#limit} characters long",
+    "any.required": "Description is required",
+  }),
+  from: Joi.date().required().messages({
+    "date.base": "Date From must be a Date",
+    "date.empty": "Date From cannot be empty",
+    "any.required": "Date From is required",
+  }),
+  to: Joi.date().required().messages({
+    "date.base": "Date To must be a Date",
+    "date.empty": "Date To cannot be empty",
+    "any.required": "Date To is required",
+  }),
+});
+
+export { changePassword, updateProfile, addUser, addCourse, updateUser, assignmentSchema };

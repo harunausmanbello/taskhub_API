@@ -68,3 +68,11 @@ export interface UpdateUser {
   lastname: string;
   email: string;
 }
+
+export interface AssignAssignment {
+  courseId: string;
+  name: string;
+  description: string;
+  from: Date;
+  to: Date;
+}

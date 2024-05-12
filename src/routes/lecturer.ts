@@ -1,13 +1,20 @@
 import { Router, Request, Response } from "express";
 import passport from "passport";
 import jwtToken from "../validators/token";
-import { ProfileData, AddUser, AddCourse, UpdateUser } from "../dtos/lecturer";
+import {
+  ProfileData,
+  AddUser,
+  AddCourse,
+  UpdateUser,
+  AssignAssignment,
+} from "../dtos/lecturer";
 import {
   updateProfile,
   changePassword,
   addUser,
   addCourse,
   updateUser,
+  assignmentSchema,
 } from "../validators/lecturer";
 import updateProfileData from "../models/lecturer/profile";
 import Passwords from "../dtos/lecturer";
@@ -24,6 +31,8 @@ import deleteCourse from "../models/lecturer/delete_course";
 import deleteUser from "../models/lecturer/delete_user";
 import viewUsers from "../models/lecturer/users";
 import updateUserModel from "../models/lecturer/update_user";
+
+import assignAssignment from "../models/lecturer/assignment";
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -298,6 +307,36 @@ router.delete(
     const id = req.params.id;
     const Response = await deleteCourse.deletecourse(id);
     res.status(Response.code).json(Response);
+  }
+);
+
+router.get(
+  "/assignment",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const query: any = req.query.courseId;
+    const reqBody = req.body as AssignAssignment;
+
+    const courseId: string = query;
+
+    assignmentSchema
+      .validateAsync(reqBody)
+      .then(async (data) => {
+        const payload = {
+          courseId: courseId,
+          reqBody: data,
+        };
+        const response = await assignAssignment.assignAssignment(payload);
+        res.status(response.code).json(response);
+      })
+      .catch((error: any) => {
+        res.status(400).json({
+          code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
   }
 );
 
