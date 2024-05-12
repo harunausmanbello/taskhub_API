@@ -1,5 +1,6 @@
 import CourseEnroll from "../schema/enroll_course";
 import Course from "../schema/course";
+import Assignment from "../schema/assignment";
 import _ from "lodash";
 
 export default {
@@ -10,6 +11,18 @@ export default {
 
     const courses = await Course.find({ _id: { $in: courseIds } });
 
-    return courses.map((course) => _.pick(course, ["code", "title", "cu"]));
+    const courseAssignments = await Promise.all(
+      courses.map(async (course) => {
+        const assignmentsCount = await Assignment.countDocuments({ courseId: course._id });
+        return {
+          code: course.code,
+          title: course.title,
+          cu: course.cu,
+          assignmentsCount: assignmentsCount
+        };
+      })
+    );
+
+    return courseAssignments;
   },
 };
