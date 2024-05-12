@@ -34,6 +34,8 @@ import updateUserModel from "../models/lecturer/update_user";
 
 import assignAssignment from "../models/lecturer/assignment";
 
+import viewAssignment from "../models/lecturer/view_assignment";
+
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
 });
@@ -337,6 +339,17 @@ router.get(
           message: error.details ? error.details[0].message : error.message,
         });
       });
+  }
+);
+
+router.get(
+  "/assignment/view",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const response = await viewAssignment.viewassignment();
+    res.status(200).json(response);
   }
 );
 
