@@ -189,4 +189,27 @@ const assignmentSchema = Joi.object({
   }),
 });
 
-export { changePassword, updateProfile, addUser, addCourse, updateUser, assignmentSchema };
+const markSchema = Joi.object({
+  mark: Joi.number().required().messages({
+    "number.base": "Mark must be a number",
+    "number.empty": "Mark cannot be empty",
+    "any.required": "Mark is required",
+  }),
+  matric: Joi.string().min(11).max(11).trim().required().messages({
+    "string.base": "Matric number must be a string",
+    "string.empty": "Matric number cannot be empty",
+    "string.min": "Matric number must be {#limit} characters long",
+    "string.max": "Matric number must be {#limit} characters long",
+    "any.required": "Matric number is required",
+  }),
+});
+
+export {
+  changePassword,
+  updateProfile,
+  addUser,
+  addCourse,
+  updateUser,
+  assignmentSchema,
+  markSchema
+};

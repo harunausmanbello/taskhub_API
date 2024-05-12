@@ -15,6 +15,7 @@ import {
   addCourse,
   updateUser,
   assignmentSchema,
+  markSchema,
 } from "../validators/lecturer";
 import updateProfileData from "../models/lecturer/profile";
 import Passwords from "../dtos/lecturer";
@@ -37,6 +38,8 @@ import assignAssignment from "../models/lecturer/assignment";
 import viewAssignment from "../models/lecturer/view_assignment";
 
 import viewFile from "../models/lecturer/view_file";
+
+import markAssignment from "../models/lecturer/mark_assignment";
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -369,6 +372,35 @@ router.get(
     } else {
       res.status(response.code).json(response);
     }
+  }
+);
+
+router.get(
+  "/assignment/mark",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  async (req: Request, res: Response) => {
+    const reqbody: any = req.body;
+    const reqUser: any = req.query;
+
+    const payload = {
+      mark: reqbody.mark,
+      matric: reqUser.matric,
+    };
+
+    markSchema
+      .validateAsync(payload)
+      .then(async (payload) => {
+        const response = await markAssignment.markassignment(payload);
+        res.status(response.code).json(response);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
   }
 );
 
