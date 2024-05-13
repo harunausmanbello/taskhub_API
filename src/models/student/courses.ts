@@ -6,15 +6,21 @@ export default {
   viewcourses: async (studentId: string) => {
     const courses = await Course.find();
 
-    const enrollments: CourseEnrollDocument[] = await CourseEnroll.find({ studentId });
+    const enrollments: CourseEnrollDocument[] = await CourseEnroll.find({
+      studentId,
+    });
 
-    const enrolledCourseIds = enrollments.map(enrollment => enrollment.courseId);
+    const enrolledCourseIds = enrollments.map(
+      (enrollment) => enrollment.courseId
+    );
 
-    const selectedCourses = courses.map(course => {
-      const status = enrolledCourseIds.includes(course._id.toString()) ? "enrolled" : "not-enrolled";
+    const selectedCourses = courses.map((course) => {
+      const status = enrolledCourseIds.includes(course._id.toString())
+        ? "enrolled"
+        : "not-enrolled";
       return {
         ..._.pick(course, ["_id", "code", "title", "cu"]),
-        status: status
+        status: status,
       };
     });
 

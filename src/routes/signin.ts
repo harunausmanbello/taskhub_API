@@ -1,5 +1,4 @@
 import { Router, Request, Response } from "express";
-import passport from "passport";
 import SignIn from "../dtos/signin";
 import signInSchema from "../validators/signin";
 import signInModel from "../models/signin/signin";
@@ -9,10 +8,6 @@ import AuthRequest from "../dtos/token";
 import otpMail from "../models/signin/otp";
 import verifyOtp from "../models/signin/verify_otp";
 import otpSchema from "../validators/otp";
-
-const authenticateJWTPassport: any = passport.authenticate("jwt", {
-  session: false,
-});
 
 const router = Router();
 
@@ -68,22 +63,5 @@ router.post(
       });
   }
 );
-
-router.get(
-  "/protected",jwtToken,
-  authenticateJWTPassport,
-  (req: Request, res: Response) => {
-    if (req.user) {
-      res.status(200).send({
-        message: "Authenticated successfully",
-        user: req.user,
-      });
-    } else {
-      // Authentication failed, return custom message
-      res.status(401).send({ message: "Invalid or missing JWT token" });
-    }
-  }
-);
-
 
 export default router;

@@ -52,6 +52,12 @@ export default {
           : { code: 207, message: "The email was rejected" };
       })
       .catch((error) => {
+        if (error.name === "CastError" && error.kind === "ObjectId") {
+          return {
+            code: 400,
+            message: "Invalid course ID format",
+          };
+        }
         return {
           code: 500,
           message: "An error occurred while sending the email",

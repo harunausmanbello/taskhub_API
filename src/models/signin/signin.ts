@@ -10,7 +10,10 @@ import User from "../schema/user";
 
 export default {
   signin: async (signinBody: SignIn) => {
-    const { email, password }: SignIn = _.pick(signinBody, ["email", "password"]);
+    const { email, password }: SignIn = _.pick(signinBody, [
+      "email",
+      "password",
+    ]);
 
     return validatePassword(signinBody.password)
       ? signInSchema
@@ -39,10 +42,22 @@ export default {
               };
             }
 
+            if (!user.isVerified) {
+              return {
+                code: 403,
+                message:
+                  "Account Not Verified: Please verify your account to proceed",
+              };
+            }
+
             if (user && isPasswordValid && user.isVerified) {
               const tokenFromConfig: string = config.get("JWT.TOKEN");
               const token: string = jwt.sign(
-                { _id: user._id, email: user.email, isLecturer: user.isLecturer },
+                {
+                  _id: user._id,
+                  email: user.email,
+                  isLecturer: user.isLecturer,
+                },
                 tokenFromConfig
               );
               return {
@@ -50,7 +65,7 @@ export default {
                 token: token,
                 userData: {
                   _id: user._id,
-                  email: user.email
+                  email: user.email,
                 },
               };
             } else {

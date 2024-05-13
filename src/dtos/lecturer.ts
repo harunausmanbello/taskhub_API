@@ -55,7 +55,7 @@ export interface AddCourse {
 
 export interface UpdateCourse {
   [x: string]: any;
-  id: string;
+  id: string | undefined;
   title: string;
   code: string;
   cu: number;
@@ -63,7 +63,7 @@ export interface UpdateCourse {
 
 export interface UpdateUser {
   [x: string]: any;
-  _id: string;
+  id: string;
   firstname: string;
   lastname: string;
   email: string;

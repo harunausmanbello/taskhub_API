@@ -3,6 +3,11 @@ import validatePassword from "./password_complexity";
 
 // Define input schema with password complexity validation
 const changePassword = Joi.object({
+  userId: Joi.string().trim().lowercase().required().messages({
+    "string.base": "User Id must be a string",
+    "string.empty": "User Id cannot be empty",
+    "any.required": "User Id is required",
+  }),
   currentPassword: Joi.string()
     .min(6)
     .max(244)
@@ -122,6 +127,11 @@ const addUser = Joi.object({
 });
 
 const updateUser = Joi.object({
+  id: Joi.string().trim().lowercase().required().messages({
+    "string.base": "User Id must be a string",
+    "string.empty": "User Id cannot be empty",
+    "any.required": "User Id is required",
+  }),
   firstname: Joi.string().min(3).trim().lowercase().required().messages({
     "string.base": "First name must be a string",
     "string.empty": "First name cannot be empty",
@@ -162,7 +172,30 @@ const addCourse = Joi.object({
     "any.required": "Credit unit is required",
   }),
 });
-
+const updateCourse = Joi.object({
+  id: Joi.string().trim().required().messages({
+    "string.base": "Course Id must be a string",
+    "string.empty": "Course Id cannot be empty",
+    "any.required": "Course Id is required",
+  }),
+  title: Joi.string().min(3).trim().lowercase().required().messages({
+    "string.base": "Course title must be a string",
+    "string.empty": "Course title cannot be empty",
+    "string.min": "Course title must be at least {#limit} characters long",
+    "any.required": "Course title is required",
+  }),
+  code: Joi.string().min(3).trim().lowercase().required().messages({
+    "string.base": "Course code must be a string",
+    "string.empty": "Course code cannot be empty",
+    "string.min": "Course code must be at least {#limit} characters long",
+    "any.required": "Course code is required",
+  }),
+  cu: Joi.number().required().messages({
+    "number.base": "Credit unit must be a number",
+    "number.empty": "Credit unit cannot be empty",
+    "any.required": "Credit unit is required",
+  }),
+});
 const assignmentSchema = Joi.object({
   courseId: Joi.string().trim().lowercase().required().messages({
     "string.base": "Course Id must be a string",
@@ -213,7 +246,8 @@ export {
   updateProfile,
   addUser,
   addCourse,
+  updateCourse,
   updateUser,
   assignmentSchema,
-  markSchema
+  markSchema,
 };

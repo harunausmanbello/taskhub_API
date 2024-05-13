@@ -39,8 +39,8 @@ const schema: Schema<AssignmentDocument> = new Schema({
   status: {
     type: String,
     required: true,
-    default: 'active'
-  }
+    default: "active",
+  },
 });
 
 // Model for Assignment registration

@@ -46,12 +46,23 @@ export default {
         });
 
         return Promise.all(selectedCoursesPromises).then((selectedCourses) => {
-          return selectedCourses; // Ensure that the return value is an array of objects
+          return selectedCourses.length !== 0
+            ? { code: 200, message: selectedCourses }
+            : { code: 204, message: "No assignments have been submitted yet" }; // return value is an array of objects
         });
       })
       .catch((error) => {
-        console.error("Error fetching assignments:", error);
-        throw error;
+        if (error.name === "CastError" && error.kind === "ObjectId") {
+          return {
+            code: 400,
+            message: "Invalid course ID format",
+          };
+        }
+
+        return {
+          code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        };
       });
   },
 };

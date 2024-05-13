@@ -18,9 +18,11 @@ router.post("/", async (req: Request, res: Response) => {
       if (response && code === 201) {
         const signUpResponse: any = await signupMail.signupmail(userData);
         const { code: signUpCode, message: signUpMessage } = signUpResponse;
-        res.status(signUpCode).json({ code:signUpCode, message: signUpMessage });
+        res
+          .status(signUpCode)
+          .json({ code: signUpCode, message: signUpMessage });
       } else {
-        res.status(code).json({ code:code, message: message });
+        res.status(code).json({ code: code, message: message });
       }
     })
     .catch((error) => {
@@ -36,7 +38,7 @@ router.get("/verify-account/:token", async (req: Request, res: Response) => {
     .verifyUser(token)
     .then((validatedData) => {
       const { code, message } = validatedData;
-      res.status(code).json({ code:code, message: message });
+      res.status(code).json({ code: code, message: message });
     })
     .catch((error: any) => {
       res.status(400).send({

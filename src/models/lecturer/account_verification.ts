@@ -4,8 +4,11 @@ import { AccountVerification } from "../../dtos/lecturer";
 
 export default {
   verifyUser: async (token: string) => {
-    const user: AccountVerification | null = await UserSignUp.findOne({
-      token: token } , { _id: 1, isVerified: 1 }
+    const user: AccountVerification | null = await UserSignUp.findOne(
+      {
+        token: token,
+      },
+      { _id: 1, isVerified: 1 }
     );
 
     if (!user) {

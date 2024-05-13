@@ -10,11 +10,14 @@ export default {
     return userOtp
       ? otpBody.otp === userOtp.otp
         ? (await Otp.updateOne(
-            { _id: userOtp._id }, 
-            { $set: { status: "used" } } 
+            { _id: userOtp._id },
+            { $set: { status: "used" } }
           ),
           { code: 200, message: "OTP verification successful." })
-        : { code: 400, message: "Incorrect OTP. Please enter the OTP sent to your email." }
+        : {
+            code: 400,
+            message: "Incorrect OTP. Please enter the OTP sent to your email.",
+          }
       : { code: 400, message: "OTP has been used or has expired." };
   },
 };

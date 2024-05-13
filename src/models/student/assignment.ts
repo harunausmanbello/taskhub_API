@@ -13,12 +13,14 @@ export default {
 
     const courseAssignments = await Promise.all(
       courses.map(async (course) => {
-        const assignmentsCount = await Assignment.countDocuments({ courseId: course._id });
+        const assignmentsCount = await Assignment.countDocuments({
+          courseId: course._id,
+        });
         return {
           code: course.code,
           title: course.title,
           cu: course.cu,
-          assignmentsCount: assignmentsCount
+          assignmentsCount: assignmentsCount,
         };
       })
     );

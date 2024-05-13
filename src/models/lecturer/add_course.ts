@@ -16,10 +16,16 @@ export default {
           .then((course: AddCourse) => {
             return {
               code: 201,
-              userData: course,
+              userData: "Course added successfully",
             };
           })
           .catch((error: any) => {
+            if (error.name === "CastError" && error.kind === "ObjectId") {
+              return {
+                code: 400,
+                message: "Invalid course ID format",
+              };
+            }
             const errorMessage =
               error.code === 11000 && error.keyPattern.code
                 ? "The course code provided already exists."

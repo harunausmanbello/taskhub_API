@@ -8,6 +8,10 @@ export default {
       _.pick(course, ["_id", "title", "code", "cu"])
     );
 
-    return selectedCourses;
+    if (selectedCourses.length === 0) {
+      return { code: 204, message: "No Courses found" };
+    }
+
+    return { code: 200, message: selectedCourses };
   },
 };

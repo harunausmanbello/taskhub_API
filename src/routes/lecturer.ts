@@ -1,10 +1,10 @@
 import { Router, Request, Response } from "express";
 import passport from "passport";
+import Joi from "joi";
 import jwtToken from "../validators/token";
 import * as interfaces from "../dtos/lecturer";
 import * as JoiSchema from "../validators/lecturer";
 import updateProfileData from "../models/lecturer/profile";
-
 import change_password from "../models/lecturer/change_password";
 import { lecturerAuthMiddleware } from "../middleware/authorization";
 import addUserModel from "../models/lecturer/add_user";
@@ -17,13 +17,9 @@ import deleteCourse from "../models/lecturer/delete_course";
 import deleteUser from "../models/lecturer/delete_user";
 import viewUsers from "../models/lecturer/users";
 import updateUserModel from "../models/lecturer/update_user";
-
 import assignAssignment from "../models/lecturer/assignment";
-
 import viewAssignment from "../models/lecturer/view_assignment";
-
 import viewFile from "../models/lecturer/view_file";
-
 import markAssignment from "../models/lecturer/mark_assignment";
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
@@ -95,11 +91,13 @@ router.post(
           profileData
         );
 
-        res.status(profileResponse.code).json(profileResponse);
+        const { code } = profileResponse;
+
+        res.status(code).json(profileResponse);
       })
       .catch((error) => {
-        res.status(500).json({
-          code: 500,
+        res.status(400).json({
+          code: 400,
           message: error.details ? error.details[0].message : error.message,
         });
       });
@@ -107,20 +105,26 @@ router.post(
 );
 
 router.post(
-  "/password",
+  "/change-password",
   jwtToken,
   authenticateJWTPassport,
   lecturerAuthMiddleware,
   (req: Request, res: Response) => {
     const userData: any | undefined = req.user;
     const userBody: interfaces.Passwords = req.body;
-    const { _id: userId } = userData;
+
+    const payload = {
+      userId: userData._id.toString(),
+      currentPassword: userBody.currentPassword,
+      newPassword: userBody.newPassword,
+      confirmNewPassword: userBody.confirmNewPassword,
+    };
 
     JoiSchema.changePassword
-      .validateAsync(userBody)
+      .validateAsync(payload)
       .then(async (validatedData) => {
         const Passwords: interfaces.ChangePassword = {
-          userId: userId,
+          userId: validatedData.userId,
           currentPassword: validatedData.currentPassword,
           newPassword: validatedData.newPassword,
           confirmNewPassword: validatedData.confirmNewPassword,
@@ -130,7 +134,9 @@ router.post(
           Passwords
         );
 
-        res.status(passwordResponse.code).json(passwordResponse);
+        const { code } = passwordResponse;
+
+        res.status(code).json(passwordResponse);
       })
       .catch((error) => {
         res.status(400).json({
@@ -169,13 +175,16 @@ router.post(
           const addUserResponse: any = await addUserMail.adduser(userData);
           const { code: addUserCode, message: addUserMessage } =
             addUserResponse;
-          res.status(addUserCode).json({ code: code, message: addUserMessage });
+          res
+            .status(addUserCode)
+            .json({ code: addUserCode, message: addUserMessage });
         } else {
           res.status(code).json({ code: code, message: message });
         }
       })
       .catch((error) => {
         res.status(400).json({
+          code: 400,
           message: error.details ? error.details[0].message : error.message,
         });
       });
@@ -183,25 +192,33 @@ router.post(
 );
 
 router.put(
-  "/user/:id",
+  "/user",
   jwtToken,
   authenticateJWTPassport,
   lecturerAuthMiddleware,
   async (req: Request, res: Response) => {
-    const id = req.params.id;
+    const id = req.query;
     const userBody = req.body as interfaces.UpdateUser;
 
+    const payload = {
+      id: id.id,
+      firstname: userBody.firstname,
+      lastname: userBody.lastname,
+      email: userBody.email,
+    };
+
     JoiSchema.updateUser
-      .validateAsync(userBody)
-      .then(async () => {
+      .validateAsync(payload)
+      .then(async (userBody) => {
         const payload = {
-          _id: id,
+          id: userBody.id.toString(),
           firstname: userBody.firstname,
           lastname: userBody.lastname,
           email: userBody.email,
         };
         const response = await updateUserModel.updateuser(payload);
-        res.status(response.code).json(response);
+        const { code } = response;
+        res.status(code).json(response);
       })
       .catch((error) => {
         res.status(400).json({
@@ -213,14 +230,35 @@ router.put(
 );
 
 router.delete(
-  "/user/:id",
+  "/user",
   jwtToken,
   authenticateJWTPassport,
   lecturerAuthMiddleware,
   async (req: Request, res: Response) => {
-    const id = req.params.id;
-    const Response = await deleteUser.deleteuser(id);
-    res.status(Response.code).json(Response);
+    const userQuery = req.query;
+    const id = userQuery.id;
+
+    const schema = Joi.object({
+      id: Joi.string().trim().lowercase().required().messages({
+        "string.base": "User Id must be a string",
+        "string.empty": "User Id cannot be empty",
+        "any.required": "User Id is required",
+      }),
+    });
+
+    schema
+      .validateAsync({ id })
+      .then(async (id) => {
+        const response = await deleteUser.deleteuser(id.id);
+        const { code } = response;
+        res.status(code).json(response);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
   }
 );
 
@@ -231,7 +269,8 @@ router.get(
   lecturerAuthMiddleware,
   async (req: Request, res: Response) => {
     const coursesResponse = await viewCourses.viewcourses();
-    res.status(200).json(coursesResponse);
+    const { code } = coursesResponse;
+    res.status(code).json(coursesResponse);
   }
 );
 
@@ -247,7 +286,8 @@ router.post(
       .validateAsync(courseBody)
       .then(async (validatedData) => {
         const addCourseResponse = await addCourseModel.addcourse(validatedData);
-        res.status(addCourseResponse.code).json(addCourseResponse);
+        const { code } = addCourseResponse;
+        res.status(code).json(addCourseResponse);
       })
       .catch((error) => {
         res.status(400).json({
@@ -259,19 +299,26 @@ router.post(
 );
 
 router.put(
-  "/course/:id",
+  "/course",
   jwtToken,
   authenticateJWTPassport,
   lecturerAuthMiddleware,
   async (req: Request, res: Response) => {
-    const id = req.params.id;
+    const id = req.query.id;
     const courseBody = req.body as interfaces.AddCourse;
 
-    JoiSchema.addCourse
-      .validateAsync(courseBody)
+    const payload = {
+      id: id,
+      title: courseBody.title,
+      code: courseBody.code,
+      cu: courseBody.cu,
+    };
+
+    JoiSchema.updateCourse
+      .validateAsync(payload)
       .then(async () => {
         const payload = {
-          id: id,
+          id: id?.toString(),
           title: courseBody.title,
           code: courseBody.code,
           cu: courseBody.cu,
@@ -279,7 +326,8 @@ router.put(
         const updateCourseResponse = await updateCourseModel.updatecourse(
           payload
         );
-        res.status(updateCourseResponse.code).json(updateCourseResponse);
+        const { code } = updateCourseResponse;
+        res.status(code).json(updateCourseResponse);
       })
       .catch((error) => {
         res.status(400).json({
@@ -291,18 +339,38 @@ router.put(
 );
 
 router.delete(
-  "/course/:id",
+  "/course",
   jwtToken,
   authenticateJWTPassport,
   lecturerAuthMiddleware,
   async (req: Request, res: Response) => {
-    const id = req.params.id;
-    const Response = await deleteCourse.deletecourse(id);
-    res.status(Response.code).json(Response);
+    const id = req.query.id;
+
+    const schema = Joi.object({
+      id: Joi.string().trim().lowercase().required().messages({
+        "string.base": "Course Id must be a string",
+        "string.empty": "Course Id cannot be empty",
+        "any.required": "Course Id is required",
+      }),
+    });
+
+    schema
+      .validateAsync({ id })
+      .then(async (id) => {
+        const response = await deleteCourse.deletecourse(id.id);
+        const { code } = response;
+        res.status(code).json(response);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
   }
 );
 
-router.get(
+router.post(
   "/assignment",
   jwtToken,
   authenticateJWTPassport,
@@ -347,10 +415,12 @@ router.get(
   lecturerAuthMiddleware,
   async (req: Request, res: Response) => {
     const response = await viewAssignment.viewassignment();
-    res.status(200).json(response);
+    const { code } = response;
+    res.status(code).json(response);
   }
 );
 
+///continue
 router.get(
   "/assignment/file",
   jwtToken,

@@ -12,7 +12,8 @@ export default {
     if (!user) {
       return {
         code: 404,
-        message: "We couldn't find a user. Double-check your entry and try again.",
+        message:
+          "We couldn't find a user. Double-check your entry and try again.",
       };
     }
 
@@ -24,7 +25,8 @@ export default {
     if (!isPasswordValid) {
       return {
         code: 404,
-        message: "The current password you entered is incorrect. Please confirm and re-enter",
+        message:
+          "The current password you entered is incorrect. Please confirm and re-enter",
       };
     }
 

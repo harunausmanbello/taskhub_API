@@ -4,8 +4,8 @@ import { UpdateUser } from "../../dtos/lecturer";
 import User from "../schema/user";
 export default {
   updateuser: async (userBody: UpdateUser) => {
-    const { _id, firstname, lastname, email } = userBody;
-    return await User.findByIdAndUpdate(_id, {
+    const { id, firstname, lastname, email } = userBody;
+    return await User.findByIdAndUpdate(id, {
       firstname,
       lastname,
       email,
@@ -23,6 +23,13 @@ export default {
         };
       })
       .catch((error) => {
+        if (error.name === "CastError" && error.kind === "ObjectId") {
+          return {
+            code: 400,
+            message: "Invalid course ID format",
+          };
+        }
+
         const errorMessage =
           error.code === 11000 && error.keyPattern.email
             ? "The email provided already exists."
