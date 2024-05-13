@@ -1,4 +1,4 @@
-export default interface Passwords {
+export interface Passwords {
   currentPassword: string;
   newPassword: string;
   confirmNewPassword: string;

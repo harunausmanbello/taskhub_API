@@ -2,12 +2,8 @@ import { Router, Request, Response } from "express";
 import passport from "passport";
 import jwtToken from "../validators/token";
 import { studentAuthMiddleware } from "../middleware/authorization";
-import {
-  changePassword,
-  updateProfile,
-  fileSchema,
-} from "../validators/student";
-import Passwords, { ChangePassword, ProfileData } from "../dtos/student";
+import * as JoiSchema from "../validators/student";
+import * as interfaces from "../dtos/student";
 import change_password from "../models/student/change_password";
 import updateProfileData from "../models/student/profile";
 import enrollCourse from "../models/student/enroll_course";
@@ -70,13 +66,13 @@ router.post(
   authenticateJWTPassport,
   studentAuthMiddleware,
   (req: Request, res: Response) => {
-    const userData = req.user as ProfileData;
-    const userBody = req.body as ProfileData;
+    const userData = req.user as interfaces.ProfileData;
+    const userBody = req.body as interfaces.ProfileData;
 
-    updateProfile
+    JoiSchema.updateProfile
       .validateAsync(userBody)
       .then(async (validatedData) => {
-        const profileData: ProfileData = {
+        const profileData: interfaces.ProfileData = {
           _id: userData._id,
           firstname: validatedData.firstname,
           lastname: validatedData.lastname,
@@ -106,13 +102,13 @@ router.post(
   studentAuthMiddleware,
   (req: Request, res: Response) => {
     const userData: any | undefined = req.user;
-    const userBody: Passwords = req.body;
+    const userBody: interfaces.Passwords = req.body;
     const { _id: userId } = userData;
 
-    changePassword
+    JoiSchema.changePassword
       .validateAsync(userBody)
       .then(async (validatedData) => {
-        const Passwords: ChangePassword = {
+        const Passwords: interfaces.ChangePassword = {
           userId: userId,
           currentPassword: validatedData.currentPassword,
           newPassword: validatedData.newPassword,
@@ -216,7 +212,7 @@ router.get(
       assignmentId: queryParams,
       file: { originalname: req.file?.filename },
     };
-    fileSchema
+    JoiSchema.fileSchema
       .validateAsync(payload)
       .then(async (data) => {
         const payloads = {

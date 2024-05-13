@@ -1,25 +1,10 @@
 import { Router, Request, Response } from "express";
 import passport from "passport";
 import jwtToken from "../validators/token";
-import {
-  ProfileData,
-  AddUser,
-  AddCourse,
-  UpdateUser,
-  AssignAssignment,
-} from "../dtos/lecturer";
-import {
-  updateProfile,
-  changePassword,
-  addUser,
-  addCourse,
-  updateUser,
-  assignmentSchema,
-  markSchema,
-} from "../validators/lecturer";
+import * as interfaces from "../dtos/lecturer";
+import * as JoiSchema from "../validators/lecturer";
 import updateProfileData from "../models/lecturer/profile";
-import Passwords from "../dtos/lecturer";
-import { ChangePassword } from "../dtos/lecturer";
+
 import change_password from "../models/lecturer/change_password";
 import { lecturerAuthMiddleware } from "../middleware/authorization";
 import addUserModel from "../models/lecturer/add_user";
@@ -93,13 +78,13 @@ router.post(
   authenticateJWTPassport,
   lecturerAuthMiddleware,
   (req: Request, res: Response) => {
-    const userData = req.user as ProfileData;
-    const userBody = req.body as ProfileData;
+    const userData = req.user as interfaces.ProfileData;
+    const userBody = req.body as interfaces.ProfileData;
 
-    updateProfile
+    JoiSchema.updateProfile
       .validateAsync(userBody)
       .then(async (validatedData) => {
-        const profileData: ProfileData = {
+        const profileData: interfaces.ProfileData = {
           _id: userData._id,
           firstname: validatedData.firstname,
           lastname: validatedData.lastname,
@@ -128,13 +113,13 @@ router.post(
   lecturerAuthMiddleware,
   (req: Request, res: Response) => {
     const userData: any | undefined = req.user;
-    const userBody: Passwords = req.body;
+    const userBody: interfaces.Passwords = req.body;
     const { _id: userId } = userData;
 
-    changePassword
+    JoiSchema.changePassword
       .validateAsync(userBody)
       .then(async (validatedData) => {
-        const Passwords: ChangePassword = {
+        const Passwords: interfaces.ChangePassword = {
           userId: userId,
           currentPassword: validatedData.currentPassword,
           newPassword: validatedData.newPassword,
@@ -173,9 +158,9 @@ router.post(
   authenticateJWTPassport,
   lecturerAuthMiddleware,
   (req: Request, res: Response) => {
-    const inputBody = req.body as AddUser;
+    const inputBody = req.body as interfaces.AddUser;
 
-    addUser
+    JoiSchema.addUser
       .validateAsync(inputBody)
       .then(async (validatedData) => await addUserModel.adduser(validatedData))
       .then(async (response) => {
@@ -204,9 +189,9 @@ router.put(
   lecturerAuthMiddleware,
   async (req: Request, res: Response) => {
     const id = req.params.id;
-    const userBody = req.body as UpdateUser;
+    const userBody = req.body as interfaces.UpdateUser;
 
-    updateUser
+    JoiSchema.updateUser
       .validateAsync(userBody)
       .then(async () => {
         const payload = {
@@ -256,9 +241,9 @@ router.post(
   authenticateJWTPassport,
   lecturerAuthMiddleware,
   (req: Request, res: Response) => {
-    const courseBody = req.body as AddCourse;
+    const courseBody = req.body as interfaces.AddCourse;
 
-    addCourse
+    JoiSchema.addCourse
       .validateAsync(courseBody)
       .then(async (validatedData) => {
         const addCourseResponse = await addCourseModel.addcourse(validatedData);
@@ -280,9 +265,9 @@ router.put(
   lecturerAuthMiddleware,
   async (req: Request, res: Response) => {
     const id = req.params.id;
-    const courseBody = req.body as AddCourse;
+    const courseBody = req.body as interfaces.AddCourse;
 
-    addCourse
+    JoiSchema.addCourse
       .validateAsync(courseBody)
       .then(async () => {
         const payload = {
@@ -324,12 +309,20 @@ router.get(
   lecturerAuthMiddleware,
   async (req: Request, res: Response) => {
     const query: any = req.query.courseId;
-    const reqBody = req.body as AssignAssignment;
+    const reqBody = req.body as interfaces.AssignAssignment;
 
     const courseId: string = query;
 
-    assignmentSchema
-      .validateAsync(reqBody)
+    const payload = {
+      courseId: courseId,
+      name: reqBody.name,
+      description: reqBody.description,
+      from: reqBody.from,
+      to: reqBody.to,
+    };
+
+    JoiSchema.assignmentSchema
+      .validateAsync(payload)
       .then(async (data) => {
         const payload = {
           courseId: courseId,
@@ -389,7 +382,7 @@ router.get(
       matric: reqUser.matric,
     };
 
-    markSchema
+    JoiSchema.markSchema
       .validateAsync(payload)
       .then(async (payload) => {
         const response = await markAssignment.markassignment(payload);

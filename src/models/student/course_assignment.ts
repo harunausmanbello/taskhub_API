@@ -1,5 +1,4 @@
 import Assignment from "../schema/assignment";
-// import Course from "../schema/course";
 import _ from "lodash";
 
 export default {

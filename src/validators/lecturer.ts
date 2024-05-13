@@ -156,15 +156,19 @@ const addCourse = Joi.object({
     "string.min": "Course code must be at least {#limit} characters long",
     "any.required": "Course code is required",
   }),
-  cu: Joi.number().min(3).required().messages({
+  cu: Joi.number().required().messages({
     "number.base": "Credit unit must be a number",
     "number.empty": "Credit unit cannot be empty",
-    "number.min": "Credit unit must be at least {#limit} characters long",
     "any.required": "Credit unit is required",
   }),
 });
 
 const assignmentSchema = Joi.object({
+  courseId: Joi.string().trim().lowercase().required().messages({
+    "string.base": "Course Id must be a string",
+    "string.empty": "Course Id cannot be empty",
+    "any.required": "Course Id is required",
+  }),
   name: Joi.string().min(3).trim().lowercase().required().messages({
     "string.base": "Name must be a string",
     "string.empty": "Name cannot be empty",

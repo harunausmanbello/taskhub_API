@@ -1,5 +1,5 @@
 import _ from "lodash";
-import AssignAssignment from "../../dtos/lecturer";
+import { AssignAssignment } from "../../dtos/lecturer";
 import Assignment from "../schema/assignment";
 import { assignmentSchema } from "../../validators/lecturer";
 import Course from "../schema/course";
