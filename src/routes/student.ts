@@ -13,6 +13,7 @@ import viewCourseAssignment from "../models/student/course_assignment";
 import submitAssignment from "../models/student/submit_assignment";
 import uploadfile from "../../config/multer";
 import viewGrade from "../models/student/view_grade";
+import Joi from "joi";
 
 const authenticateJWTPassport: any = passport.authenticate("jwt", {
   session: false,
@@ -69,8 +70,16 @@ router.post(
     const userData = req.user as interfaces.ProfileData;
     const userBody = req.body as interfaces.ProfileData;
 
+    const payload: interfaces.ProfileData = {
+      _id: userData._id.toString(),
+      firstname: userBody.firstname,
+      lastname: userBody.lastname,
+      matric: userBody.matric,
+      email: userBody.email,
+    };
+
     JoiSchema.updateProfile
-      .validateAsync(userBody)
+      .validateAsync(payload)
       .then(async (validatedData) => {
         const profileData: interfaces.ProfileData = {
           _id: userData._id,
@@ -96,20 +105,26 @@ router.post(
 );
 
 router.post(
-  "/password",
+  "/change-password",
   jwtToken,
   authenticateJWTPassport,
   studentAuthMiddleware,
   (req: Request, res: Response) => {
     const userData: any | undefined = req.user;
     const userBody: interfaces.Passwords = req.body;
-    const { _id: userId } = userData;
+
+    const payload = {
+      _id: userData._id.toString(),
+      currentPassword: userBody.currentPassword,
+      newPassword: userBody.newPassword,
+      confirmNewPassword: userBody.confirmNewPassword,
+    };
 
     JoiSchema.changePassword
-      .validateAsync(userBody)
+      .validateAsync(payload)
       .then(async (validatedData) => {
         const Passwords: interfaces.ChangePassword = {
-          userId: userId,
+          userId: validatedData._id,
           currentPassword: validatedData.currentPassword,
           newPassword: validatedData.newPassword,
           confirmNewPassword: validatedData.confirmNewPassword,
@@ -118,8 +133,8 @@ router.post(
         const passwordResponse = await change_password.changepassword(
           Passwords
         );
-
-        res.status(passwordResponse.code).json(passwordResponse);
+        const { code } = passwordResponse;
+        res.status(code).json(passwordResponse);
       })
       .catch((error) => {
         res.status(400).json({
@@ -137,10 +152,28 @@ router.get(
   studentAuthMiddleware,
   async (req: Request, res: Response) => {
     const userInfo: any = req.user;
-    const { _id: studentId } = userInfo;
+    const _id = userInfo._id.toString();
 
-    const coursesResponse = await viewCourses.viewcourses(studentId);
-    res.status(200).json(coursesResponse);
+    const schema = Joi.object({
+      _id: Joi.string().trim().lowercase().required().messages({
+        "string.base": "Student Id must be a string",
+        "string.empty": "Student Id cannot be empty",
+        "any.required": "Student Id is required",
+      }),
+    });
+
+    schema
+      .validateAsync({ _id })
+      .then(async (id) => {
+        const coursesResponse = await viewCourses.viewcourses(id._id);
+        res.status(200).json(coursesResponse);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message: error.details ? error.details[0].message : error.message,
+        });
+      });
   }
 );
 
@@ -156,13 +189,42 @@ router.get(
     if (userInfo) {
       const { _id: studentId } = userInfo;
 
+      const schema = Joi.object({
+        studentId: Joi.string().trim().lowercase().required().messages({
+          "string.base": "Student Id must be a string",
+          "string.empty": "Student Id cannot be empty",
+          "any.required": "Student Id is required",
+        }),
+        courseId: Joi.string().trim().lowercase().required().messages({
+          "string.base": "Course Id must be a string",
+          "string.empty": "Course Id cannot be empty",
+          "any.required": "Course Id is required",
+        }),
+      });
+
       const payload = {
-        studentId: studentId,
+        studentId: studentId.toString(),
         courseId: courseId,
       };
 
-      const response = await enrollCourse.enrollcourse(payload);
-      res.status(response.code).json(response);
+      schema
+        .validateAsync(payload)
+        .then(async (id) => {
+          const response = await enrollCourse.enrollcourse(payload);
+          const { code } = response;
+          res.status(code).json(response);
+        })
+        .catch((error) => {
+          res.status(400).json({
+            code: 400,
+            message:
+              error.name === "CastError" && error.kind === "ObjectId"
+                ? "Invalid course ID format"
+                : error.details
+                ? error.details[0].message
+                : error.message,
+          });
+        });
     } else {
       res.status(404).json({ code: 404, message: "User not found" });
     }
@@ -176,10 +238,33 @@ router.get(
   studentAuthMiddleware,
   async (req: Request, res: Response) => {
     const userInfo: any = req.user;
-    const { _id: studentId } = userInfo;
+    const _id = userInfo._id.toString();
 
-    const response = await viewAssignment.viewassignment(studentId);
-    res.status(200).json(response);
+    const schema = Joi.object({
+      _id: Joi.string().trim().lowercase().required().messages({
+        "string.base": "Student Id must be a string",
+        "string.empty": "Student Id cannot be empty",
+        "any.required": "Student Id is required",
+      }),
+    });
+
+    schema
+      .validateAsync({ _id })
+      .then(async (id) => {
+        const response = await viewAssignment.viewassignment(id);
+        res.status(200).json(response);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message:
+            error.name === "CastError" && error.kind === "ObjectId"
+              ? "Invalid User ID format"
+              : error.details
+              ? error.details[0].message
+              : error.message,
+        });
+      });
   }
 );
 
@@ -189,11 +274,34 @@ router.get(
   authenticateJWTPassport,
   studentAuthMiddleware,
   async (req: Request, res: Response) => {
-    const queryParams: any = req.query.courseId;
-    const courseId: string = queryParams;
+    const queryParams: any = req.query;
+    const _id: string = queryParams.courseId.toString();
 
-    const response = await viewCourseAssignment.viewcourseassignment(courseId);
-    res.status(200).json(response);
+    const schema = Joi.object({
+      _id: Joi.string().trim().lowercase().required().messages({
+        "string.base": "Course Id must be a string",
+        "string.empty": "Course Id cannot be empty",
+        "any.required": "Course Id is required",
+      }),
+    });
+
+    schema
+      .validateAsync({ _id })
+      .then(async (id) => {
+        const response = await viewCourseAssignment.viewcourseassignment(id);
+        res.status(200).json(response);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message:
+            error.name === "CastError" && error.kind === "ObjectId"
+              ? "Invalid User ID format"
+              : error.details
+              ? error.details[0].message
+              : error.message,
+        });
+      });
   }
 );
 
@@ -233,21 +341,51 @@ router.get(
 );
 
 router.get(
-  "/assignment/grade",
+  "/assignment/marks",
   jwtToken,
   authenticateJWTPassport,
   studentAuthMiddleware,
   async (req: Request, res: Response) => {
     const reqUser: any = req.user;
-    const studentId: string = reqUser._id;
-    const response = await viewGrade.viewgrade(studentId);
-    res.status(200).json(response);
+    const _id: string = reqUser._id.toString();
+
+    const schema = Joi.object({
+      _id: Joi.string().trim().lowercase().required().messages({
+        "string.base": "Student Id must be a string",
+        "string.empty": "Student Id cannot be empty",
+        "any.required": "Student Id is required",
+      }),
+    });
+
+    schema
+      .validateAsync({ _id })
+      .then(async (id) => {
+        const response = await viewGrade.viewgrade(id);
+        res.status(200).json(response);
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message:
+            error.name === "CastError" && error.kind === "ObjectId"
+              ? "Invalid User ID format"
+              : error.details
+              ? error.details[0].message
+              : error.message,
+        });
+      });
   }
 );
 
-router.get("/logout", (req: Request, res: Response) => {
-  res.removeHeader("x-auth-token");
-  res.status(200).json({ code: 200, message: "Logout successful" });
-});
+router.get(
+  "/logout",
+  jwtToken,
+  authenticateJWTPassport,
+  studentAuthMiddleware,
+  (req: Request, res: Response) => {
+    res.removeHeader("x-auth-token");
+    res.status(200).json({ code: 200, message: "Logout successful" });
+  }
+);
 
 export default router;

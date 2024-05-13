@@ -24,9 +24,16 @@ export default {
         };
       })
       .catch((error) => {
+        const errorMessage =
+          error.code === 11000 && error.keyPattern.email
+            ? "The email address provided already exists."
+            : error.details?.[0]?.message?.status ||
+              error.message ||
+              "Unknown error occurred.";
+
         return {
-          code: 500,
-          message: error.message,
+          code: error.code === 11000 ? 409 : 500,
+          message: errorMessage,
         };
       });
   },

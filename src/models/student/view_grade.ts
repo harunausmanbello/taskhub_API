@@ -9,7 +9,7 @@ export default {
       .populate("assignmentId") // Populate the assignmentId field in Submits
       .then((assignments) => {
         const selectedCoursesPromises = assignments.map((assignment) => {
-          const { assignmentId, marks } = assignment; //from submit assignment model
+          const { assignmentId, marks, status } = assignment; //from submit assignment model
 
           const assignmentPromise = Assignment.findById(assignmentId).then(
             (assignment) => {
@@ -32,6 +32,7 @@ export default {
                 assignmentName: name || "No Assignment found",
                 courseCode: code || "No Course found",
                 Marks: marks,
+                Status: status,
               };
             }
           );

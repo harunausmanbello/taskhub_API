@@ -52,13 +52,6 @@ export default {
         });
       })
       .catch((error) => {
-        if (error.name === "CastError" && error.kind === "ObjectId") {
-          return {
-            code: 400,
-            message: "Invalid course ID format",
-          };
-        }
-
         return {
           code: 400,
           message: error.details ? error.details[0].message : error.message,

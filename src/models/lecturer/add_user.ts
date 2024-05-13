@@ -41,13 +41,6 @@ export default {
                 };
               })
               .catch((error: any) => {
-                if (error.name === "CastError" && error.kind === "ObjectId") {
-                  return {
-                    code: 400,
-                    message: "Invalid course ID format",
-                  };
-                }
-
                 const errorMessage =
                   error.code === 11000 && error.keyPattern.email
                     ? "The email address provided already exists."

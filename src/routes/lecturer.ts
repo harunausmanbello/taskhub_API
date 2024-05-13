@@ -420,21 +420,45 @@ router.get(
   }
 );
 
-///continue
 router.get(
   "/assignment/file",
   jwtToken,
   authenticateJWTPassport,
   lecturerAuthMiddleware,
   async (req: Request, res: Response) => {
-    const studentMatric: any = req.query.matric;
-    const response = await viewFile.viewfile(studentMatric);
-    const filePath = response.file;
-    if (filePath) {
-      res.status(200).sendFile(filePath);
-    } else {
-      res.status(response.code).json(response);
-    }
+    const reqUser: any = req.query;
+    const _id: string = reqUser.matric;
+
+    const schema = Joi.object({
+      _id: Joi.string().trim().lowercase().required().messages({
+        "string.base": "Matric Id must be a string",
+        "string.empty": "Matric Id cannot be empty",
+        "any.required": "Matric Id is required",
+      }),
+    });
+
+    schema
+      .validateAsync({ _id })
+      .then(async (id) => {
+        const response = await viewFile.viewfile(id);
+        const filePath = response.file;
+        if (filePath) {
+          res.status(200).sendFile(filePath);
+        } else {
+          res.status(response.code).json(response);
+        }
+      })
+      .catch((error) => {
+        res.status(400).json({
+          code: 400,
+          message:
+            error.name === "CastError" && error.kind === "ObjectId"
+              ? "Invalid User ID format"
+              : error.details
+              ? error.details[0].message
+              : error.message,
+        });
+      });
   }
 );
 
@@ -456,7 +480,8 @@ router.get(
       .validateAsync(payload)
       .then(async (payload) => {
         const response = await markAssignment.markassignment(payload);
-        res.status(response.code).json(response);
+        const { code } = response;
+        res.status(code).json(response);
       })
       .catch((error) => {
         res.status(400).json({
@@ -482,9 +507,15 @@ router.get("/verify-account/:token", async (req: Request, res: Response) => {
     });
 });
 
-router.get("/logout", (req: Request, res: Response) => {
-  res.removeHeader("x-auth-token");
-  res.status(200).json({ code: 200, message: "Logout successful" });
-});
+router.get(
+  "/logout",
+  jwtToken,
+  authenticateJWTPassport,
+  lecturerAuthMiddleware,
+  (req: Request, res: Response) => {
+    res.removeHeader("x-auth-token");
+    res.status(200).json({ code: 200, message: "Logout successful" });
+  }
+);
 
 export default router;

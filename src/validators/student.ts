@@ -4,6 +4,11 @@ import validateFileExtension from "./file_type";
 
 // Define input schema with password complexity validation
 const changePassword = Joi.object({
+  _id: Joi.string().required().messages({
+    "string.base": "Student Id must be a string",
+    "string.empty": "Student Id cannot be empty",
+    "any.required": "Student Id is required",
+  }),
   currentPassword: Joi.string()
     .min(6)
     .max(244)
@@ -55,6 +60,11 @@ const changePassword = Joi.object({
 });
 
 const updateProfile = Joi.object({
+  _id: Joi.string().required().messages({
+    "string.base": "Student Id must be a string",
+    "string.empty": "Student Id cannot be empty",
+    "any.required": "Student Id is required",
+  }),
   firstname: Joi.string().min(3).trim().lowercase().required().messages({
     "string.base": "First name must be a string",
     "string.empty": "First name cannot be empty",
