@@ -50,7 +50,7 @@ Grading System: Lecturers can view, grade, and provide feedback on assignments.
 ##### 1.Clone the repository:
 
 ```
-git clone https://github.com/RashidArtisan/taskhub.git
+git clone https://github.com/RashidArtisan/taskhub_API.git
 ```
 ```
 cd taskhub
