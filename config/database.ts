@@ -10,8 +10,12 @@ import mongoose from "mongoose";
 
 // mongodb+srv://harunarrasheeed:<db_password>@cluster0.fs3kc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
-const connectionStringProduction = `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/`;
+// const connectionStringProduction = `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/`
+// const connectionStringProduction = `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
+const connectionStringProduction =
+  process.env.MONGODB_URI ||
+  `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 export default mongoose
   .connect(connectionStringProduction)
