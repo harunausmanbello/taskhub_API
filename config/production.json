@@ -1,0 +1,9 @@
+{
+    "APP_NAME": "TaskHub",
+    "APP_URL": "http://taskhub.test",
+    "DB_HOST": "localhost",
+    "DB_NAME": "taskhub",
+    "DB_PORT": 3000,
+    "TOKEN": "taskHubToken"
+  }
+  

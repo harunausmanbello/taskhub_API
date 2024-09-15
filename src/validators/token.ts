@@ -11,7 +11,7 @@ const verifyToken = (req: AuthRequest, res: Response, next: NextFunction) => {
     return res.status(401).json({ message: "No token provided" });
   }
 
-  jwt.verify(token, config.get<string>("JWT.TOKEN"), (err, payload) => {
+  jwt.verify(token, config.get<string>("TOKEN"), (err, payload) => {
     if (err) {
       return res
         .status(401)

@@ -40,6 +40,6 @@ app.use("/signin", signIn);
 app.use("/lecturer", lecturer);
 app.use("/student", student);
 
-const port: number = config.get("DB.DB_PORT") || 5000;
+const port: number = config.get("DB_PORT") || 5000;
 
 app.listen(port, () => console.log(`TaskHub is listening on port ${port}...`));
