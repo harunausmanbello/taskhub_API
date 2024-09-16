@@ -1,7 +1,7 @@
 import _ from "lodash";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import config from "config";
+// import config from "config";
 
 import SignIn, { SignInUser } from "../../dtos/signin";
 import validatePassword from "../../validators/password_complexity";

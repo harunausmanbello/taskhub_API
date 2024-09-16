@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import config from "config";
+// import config from "config";
 import User from "../models/schema/user";
 
 export default function configurePassport(

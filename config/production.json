@@ -1,9 +1,0 @@
-{
-  "APP_NAME": "TaskHub",
-  "APP_URL": "http://taskhub.test",
-  "DB_HOST": "localhost",
-  "DB_NAME": "taskhub",
-  "DB_PORT": 3000,
-  "TOKEN": "taskHubToken",
-  "MONGO_URI": "mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-}
