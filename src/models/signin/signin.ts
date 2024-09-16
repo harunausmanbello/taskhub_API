@@ -51,7 +51,7 @@ export default {
             }
 
             if (user && isPasswordValid && user.isVerified) {
-              const tokenFromConfig: string = config.get("TOKEN") || 'taskHubToken';
+              const tokenFromConfig: string =  'taskHubToken';
               const token: string = jwt.sign(
                 {
                   _id: user._id,

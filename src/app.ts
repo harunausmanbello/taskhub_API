@@ -50,6 +50,6 @@ if (process.env.NODE_ENV === "production") {
 console.log('NODE_ENV:', process.env.NODE_ENV);
 
 
-app.listen(port, () => console.log(`TaskHub is listening on port ${port}...`));
+app.listen(port, () => console.log(`TaskHub is listening on port 3000...`));
 
 export default app;

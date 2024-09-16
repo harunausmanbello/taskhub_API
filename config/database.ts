@@ -14,7 +14,6 @@ import mongoose from "mongoose";
 // const connectionStringProduction = `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 const connectionStringProduction =
-  process.env.MONGODB_URI ||
   `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 export default mongoose

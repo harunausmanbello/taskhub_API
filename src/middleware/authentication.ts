@@ -9,7 +9,7 @@ export default function configurePassport(
   // Configure options for JWT strategy
   const jwtOptions: any = {
     jwtFromRequest: ExtractJwt.fromHeader("x-auth-token"),
-    secretOrKey: config.get<string>("TOKEN") || 'taskHubToken',
+    secretOrKey:  'taskHubToken',
   };
 
   passportInstance.use(
