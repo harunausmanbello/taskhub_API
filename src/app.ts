@@ -42,10 +42,12 @@ app.use("/student", student);
 
 const port: number = config.get("DB_PORT") || 5000;
 
-if (process.env.NODE_ENV === 'production') {
-  console.log('Running in production mode');
+if (process.env.NODE_ENV === "production") {
+  console.log("Running in production mode");
 } else {
-  console.log('Not running in production mode');
+  console.log("Not running in production mode");
 }
 
 app.listen(port, () => console.log(`TaskHub is listening on port ${port}...`));
+
+export default app;
