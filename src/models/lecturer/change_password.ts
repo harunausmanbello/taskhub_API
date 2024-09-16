@@ -1,5 +1,5 @@
 import { ChangePassword } from "../../dtos/lecturer";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import User from "../schema/user";
 
 export default {
@@ -17,7 +17,7 @@ export default {
       };
     }
 
-    const isPasswordValid: boolean = await bcrypt.compare(
+    const isPasswordValid: boolean = await bcryptjs.compare(
       currentPassword,
       user.password
     );
@@ -30,9 +30,9 @@ export default {
       };
     }
 
-    const salt: string = await bcrypt.genSalt(10);
+    const salt: string = await bcryptjs.genSalt(10);
 
-    const hashedPassword: string = await bcrypt.hash(newPassword, salt);
+    const hashedPassword: string = await bcryptjs.hash(newPassword, salt);
     return User.findOneAndUpdate({ _id: userId }, { password: hashedPassword })
       .then(() => {
         return {

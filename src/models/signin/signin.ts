@@ -1,5 +1,5 @@
 import _ from "lodash";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import config from "config";
 
@@ -30,7 +30,7 @@ export default {
               };
             }
 
-            const isPasswordValid: boolean = await bcrypt.compare(
+            const isPasswordValid: boolean = await bcryptjs.compare(
               password,
               user.password
             );

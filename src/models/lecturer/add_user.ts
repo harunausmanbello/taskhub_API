@@ -1,5 +1,5 @@
 import _ from "lodash";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 
 import validatePassword from "../../validators/password_complexity";
 import { AddUser } from "../../dtos/lecturer";
@@ -12,9 +12,9 @@ export default {
       ? addUser
           .validateAsync(addUserBody)
           .then(async () => {
-            const salt: string = await bcrypt.genSalt(10);
+            const salt: string = await bcryptjs.genSalt(10);
 
-            const hashedPassword: string = await bcrypt.hash(
+            const hashedPassword: string = await bcryptjs.hash(
               addUserBody.password,
               salt
             );
