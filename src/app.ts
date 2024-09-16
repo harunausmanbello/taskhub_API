@@ -14,16 +14,6 @@ import signIn from "./routes/signin";
 import lecturer from "./routes/lecturer";
 import student from "./routes/student";
 
-import { NODE_CONFIG_DIR, SUPPRESS_NO_CONFIG_WARNING, NODE_ENV } from './env';
-
-// const configDir = '/home/goran/code/butler/src/config/';
-
-
-
-// process.env.NODE_CONFIG_DIR = configDir;
-// process.env.NODE_ENV = 'production';
-// process.env.SUPPRESS_NO_CONFIG_WARNING = 'false';
-
 const app = express();
 
 dbConnection; //calling the dbConnection in app.ts
