@@ -47,6 +47,8 @@ if (process.env.NODE_ENV === "production") {
 } else {
   console.log("Not running in production mode");
 }
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
 
 app.listen(port, () => console.log(`TaskHub is listening on port ${port}...`));
 
