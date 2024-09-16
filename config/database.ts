@@ -15,6 +15,6 @@ const connectionStringProduction =
   `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 export default mongoose
-  .connect(connectionString)
+  .connect(connectionStringProduction)
   .then(() => console.log("Connected to MongoDB.."))
   .catch((error) => console.log("Could not connect to MongoDB...", error));
