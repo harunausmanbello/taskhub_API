@@ -4,17 +4,15 @@ import mongoose from "mongoose";
 
 // const { DB_HOST, DB_NAME }: DBConfig = config.get("DB");
 
-// const connectionString = `mongodb://localhost/taskhub`;
+const connectionString = `mongodb://mongo:nxnlsCSpfRPYZmgHiHvOMnvcFOwzDmuY@junction.proxy.rlwy.net:42617`;
 
-// mongodb+srv://harunarrasheeed:<db_password>@cluster0.fs3kc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
-// const connectionStringProduction = `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/`
 // const connectionStringProduction = `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-const connectionStringProduction =
-  `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+// const connectionStringProduction =
+//   `mongodb+srv://harunarrasheeed:Harunausman10@cluster0.wa8st.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 export default mongoose
-  .connect(connectionStringProduction)
+  .connect(connectionString)
   .then(() => console.log("Connected to MongoDB.."))
   .catch((error) => console.log("Could not connect to MongoDB...", error));
